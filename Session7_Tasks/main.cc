@@ -1,11 +1,30 @@
+/**
+ * @file main.cc
+ * @brief Demonstrates the Student Management System.
+ *
+ * This program creates two Student objects and demonstrates two
+ * different ways of initializing student information:
+ *
+ * 1. Calling each setter function individually.
+ * 2. Calling the setClassData() function to initialize all data at once.
+ *
+ * The program then prints each student's information including
+ * name, ID, subject grades, total marks, average, and final grade.
+ *
+ * @author Sara Saad
+ * @date July 2026
+ */
+
+
 #include "student_management.hh"
 #include "iostream"
-
-
+#include <limits>
 
 int main()
 {
     class Student student1;
+    class Student student2;
+
     std::string student_name_;
     unsigned int student_id_;
     double subject_degree_[SUBJECT_NUM];
@@ -29,14 +48,29 @@ int main()
     student1.setAverage(student1.getTotal());
     student1.setGarade(student1.getAverage());
 
-    std::cout<<"\n============================== Result Manue ================================== \n\n";
-    std::cout<<"Name: "<<student1.getStudentName()<<std::endl;
-    std::cout<<"ID: "<<student1.getStudentID()<<std::endl;
-    std::cout<<"Subjects Total: "<<student1.getTotal()<<std::endl;
-    std::cout<<"Average: "<<student1.getAverage()<<std::endl;
-    std::cout<<"Grade: "<<student1.getGrade()<<std::endl;
-    std::cout<<std::endl;
+    student1.printStudent();
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    std::string student_name;
+    unsigned int student_id;
+    double subject_degree[SUBJECT_NUM];
+    
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout<<"Enter Student Name: ";
+    std::getline(std::cin, student_name);
+
+    std::cout<<"Enter Student ID: ";
+    std::cin>>student_id;
+
+    for(int i=0 ; i<SUBJECT_NUM ; i++)
+    {
+        std::cout<<"Subject["<<i+1<<"] Degree: ";
+        std::cin>>subject_degree[i];
+    }
+
+    student2.setClassData(student_name, student_id, subject_degree);
+    student2.printStudent();
 
     return 0;
 }
