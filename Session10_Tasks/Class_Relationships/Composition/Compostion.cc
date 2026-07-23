@@ -124,9 +124,14 @@ void Car::setCarModelYear(const unsigned int model_year)
     model_year_ = model_year;
 }
 
-void Car::setCarEngin(const Engin &engin)
+void Car::setCarEnginModel(const std::string &model)
 {
-    engin_ = engin;
+    engin_.setEnginModel(model);
+}
+
+void Car::setCarEnginHoursePower(const double hourse_power)
+{
+    engin_.setEnginHoursepower(hourse_power);
 }
 
 void Car::printCarInfo() const

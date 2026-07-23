@@ -192,7 +192,8 @@ public:
      *
      * @param engin Engine object.
      */
-    void setCarEngin(const Engin &engin);
+    void setCarEnginModel(const std::string &model);
+    void setCarEnginHoursePower(const double hourse_power);
 
     /**
      * @brief Prints all car information, including engine details.
