@@ -242,12 +242,3 @@ I'm continuously updating this repository as I progress through the ITI Embedded
 Happy Coding 🚀
 
 </p>
-
----
-
-<sub>
-
-Repository documentation was prepared with AI assistance.  
-All source code, implementations, exercises, assignments, and projects are my own work unless otherwise stated.
-
-</sub>
