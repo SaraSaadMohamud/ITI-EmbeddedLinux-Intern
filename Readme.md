@@ -44,8 +44,11 @@ The primary goals of this repository are to:
 Topics covered include:
 
 - Variables & Data Types
+- Conditions
+- Looping
 - Functions
 - Arrays & Strings
+- User Data Types
 - Pointers & References
 - Dynamic Memory Allocation
 - Object-Oriented Programming
