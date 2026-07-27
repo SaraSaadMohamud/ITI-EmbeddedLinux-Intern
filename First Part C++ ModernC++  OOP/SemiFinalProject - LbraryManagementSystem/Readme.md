@@ -5,7 +5,17 @@ A console-based **Library Management System** implemented in **Modern C++** to d
 This project was developed as a practical application of C++ OOP principles including inheritance, polymorphism, abstract classes, interfaces, composition, smart pointers, and STL containers.
 
 ---
+## UML Class Diagram
 
+<p align="center">
+  <img src="UML/UML1.png" alt="White Library UML Diagram" width="900">
+</p>
+
+<p align="center">
+  <img src="UML/UML2.png" alt="Black Library UML Diagram" width="900">
+</p>
+
+---
 ##  Features
 
 - 📖 Book Management
