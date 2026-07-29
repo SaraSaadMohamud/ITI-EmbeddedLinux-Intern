@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Account.hpp"
+#include "Transaction.hpp"
 
 /**
  * @file Bank.hpp
@@ -148,6 +149,48 @@ public:
     */
     void displayAccounts() const;
 
+    /**
+        * @brief Displays all recorded account transactions.
+        *
+        * @details
+        * Prints the complete transaction history stored for the account.
+        * If no transactions are available, an appropriate message is displayed.
+        *
+        * @note This function does not modify the account or its transaction history.
+    */
+    void displayTransactions() const;
+
+    /**
+        * @brief Displays general information about the bank.
+        *
+        * @details
+        * Prints an overview of the bank, such as its name, the total number
+        * of accounts, and other relevant summary information.
+    */
+    void displayBankInfo() const;
+
+    /**
+        * @brief Displays the transaction history for a specific bank account.
+        *
+        * @param account_id The unique identifier of the account whose
+        *        transactions are to be displayed.
+        *
+        * @details
+        * Searches for the account with the specified ID and prints all
+        * recorded transactions associated with it. If the account does
+        * not exist, an appropriate message is displayed.
+    */
+    void displayBankAccountTransaction(unsigned int account_id) const;
+
+    /**
+        * @brief Displays transaction statistics for the bank.
+        *
+        * @details
+        * Prints statistical information about all recorded transactions,
+        * such as the total number of transactions and other available
+        * transaction-related summaries.
+    */
+    void displayTransactionStatistics() const;
 
 private:
 
@@ -163,6 +206,28 @@ private:
      * The Bank object owns the accounts stored in this container.
     */
     std::vector<Account *> accounts_;
+
+    /**
+        * @brief Stores all transactions associated with the account.
+        *
+        * @details
+        * This vector maintains a history of every transaction performed
+        * on the account, including deposits, withdrawals, and transfers.
+        * New transactions are appended as they occur.
+    */
+    std::vector<Transaction> transactions_;
+
+    /**
+        * @brief Adds a new transaction to the transaction history.
+        *
+        * @param obj A constant reference to the Transaction object to be added.
+        *
+        * @details
+        * Inserts the specified transaction into the collection of stored
+        * transactions without modifying the original object.
+    */
+    void addTransaction(const Transaction & obj);
+    
 };
 
 #endif /* _BANK_HPP_ */

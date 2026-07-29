@@ -89,9 +89,10 @@ void Bank::deposit(double amount, unsigned int account_id)
     {
         throw std::invalid_argument("Account not found.");
     }
-
     target_account->deposit(amount);
-    
+
+    Transaction copy_transaction(Transaction::TransactionType::Deposit,amount,0,account_id);
+    addTransaction(copy_transaction);
 }
 
 void Bank::withdraw(double amount, unsigned int account_id)
@@ -101,8 +102,10 @@ void Bank::withdraw(double amount, unsigned int account_id)
     {
         throw std::invalid_argument("Account not found.");
     }
-
     target_account->withdraw(amount);
+
+    Transaction copy_transaction(Transaction::TransactionType::Withdraw,amount,account_id, 0);
+    addTransaction(copy_transaction);
 }
 
 void Bank::transfer(double amount,
@@ -128,6 +131,9 @@ void Bank::transfer(double amount,
 
     sender_account->withdraw(amount);
     receiver_account->deposit(amount);
+
+    Transaction copy_transaction(Transaction::TransactionType::Transfer,amount,account1_id,account2_id);
+    addTransaction(copy_transaction);
 }
 
 unsigned int Bank::getAccountsCount() const
@@ -135,10 +141,100 @@ unsigned int Bank::getAccountsCount() const
     return accounts_.size();
 }
 
+void Bank::addTransaction(const Transaction & obj)
+{
+    transactions_.push_back(obj);
+}
+
 void Bank::displayAccounts() const
 {
+    if(accounts_.empty())
+    {
+        std::cout<<"No Accounts Yes!\n";
+        return;
+    }
+
     for(auto iterator : accounts_)
     {
         iterator->displayAccountInfo();
     }
+}
+
+void Bank::displayBankAccountTransaction(unsigned int account_id) const
+{
+    Account * target_account = findAccount(account_id);
+    bool flag = false;
+    if(target_account == nullptr)
+    {
+        throw std::invalid_argument("Account not found.");
+    }
+
+    for(const auto &transaction : transactions_)
+    {
+        if( (transaction.getTransactionReceiverAccountID() == account_id)|| 
+            (transaction.getTransactionSenderAccountID()   == account_id) )
+        {
+            transaction.displayTransaction();
+            flag = true;
+        }
+    }
+
+    if(!flag)
+    {
+        std::cout<<"No Transaction for this Account Yet!\n"<<std::endl;
+    }
+}
+    
+
+void Bank::displayTransactions() const
+{
+    if(transactions_.empty())
+    {
+        std::cout<<"No Transactions Yet!.\n";
+        return;
+    }
+    for(const auto &count : transactions_)
+    {
+        count.displayTransaction();
+    }
+}
+
+void Bank::displayTransactionStatistics() const
+{
+    unsigned int deposit = 0, withdraw = 0, transfer = 0;
+     if(transactions_.empty())
+    {
+        std::cout<<"No Transactions Yet!.\n";
+        return;
+    }
+
+    for(const auto &transaction : transactions_)
+    {
+        if(transaction.getTransactionType() == Transaction::TransactionType::Deposit)
+        {
+            ++deposit;
+        }
+        else if(transaction.getTransactionType() == Transaction::TransactionType::Withdraw)
+        {
+            ++withdraw;
+        }
+        else if(transaction.getTransactionType() == Transaction::TransactionType::Transfer)
+        {
+            ++transfer;
+        }
+    }
+
+    std::cout << "------------ Transaction Statistics ------------\n";
+    std::cout<<"Total Deposit       : "<<deposit                <<std::endl;
+    std::cout<<"Total Withdraw      : "<<withdraw               <<std::endl;
+    std::cout<<"Total Transfer      : "<<transfer               <<std::endl;
+    std::cout<<"Total Transaction   : "<<transactions_.size()   <<std::endl;
+}
+
+void Bank::displayBankInfo()const 
+{
+    std::cout<<"----------- Bank Information -------------\n";
+    std::cout<<"Name            : "<<bank_name_             <<std::endl;
+    std::cout<<"Accounts        : "<<accounts_.size()       <<std::endl;
+    std::cout<<"Transactions    : "<<transactions_.size()   <<std::endl;
 }
