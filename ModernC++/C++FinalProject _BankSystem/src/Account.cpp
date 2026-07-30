@@ -38,8 +38,8 @@ unsigned int Account::next_account_id_ = 0;
 */
 constexpr unsigned int max_amount_at_one_time = 10000;
 
-Account::Account(const std::string &name,double balance): 
-        owner_name_(name), balance_(0.0)
+Account::Account(const std::string &name,double balance,const std::string &password): 
+        owner_name_(name), balance_(0.0), password_(password)
 {
     deposit(balance);
     ++account_number_;
@@ -96,4 +96,9 @@ void Account::displayAccountInfo() const
     std::cout<<"Name        : "<<owner_name_    <<std::endl;
     std::cout<<"ID          : "<<account_id_    <<std::endl;
     std::cout<<"Balance     : "<<balance_       <<std::endl;
+}
+
+const std::string& Account::getPassword() const
+{
+    return(password_);
 }

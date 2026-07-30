@@ -14,6 +14,22 @@ void displayAdminMenu(Bank &bank)
     while(true)
     {
         flag=0;
+        std::cout<<"\n------------------------------- Admin Menu ----------------------------\n";
+        std::cout<<"1. Add New Account.\n\n";
+        std::cout<<"2. Remove Account.\n\n";
+        std::cout<<"3. Deposit.\n\n";
+        std::cout<<"4. Withdraw.\n\n";
+        std::cout<<"5. Transfer.\n\n";
+        std::cout<<"6. Display Account Transactions\n\n";
+        std::cout<<"7. Display All Accounts.\n\n";
+        std::cout<<"8. Display Bank Infromation\n\n";
+        std::cout<<"9. Display Bank Transaction\n\n";
+        std::cout<<"10. Display Transaction Statistics.\n\n";
+        std::cout<<"11. logout.\n\n";
+        std::cout<<"12. Exit.\n\n";
+        std::cout<<"--------------------------------------------------------------------------\n";
+
+
         do{
             std::cout<<"Enter your Choice: ";
             if(!(std::cin>>choice))
@@ -23,7 +39,7 @@ void displayAdminMenu(Bank &bank)
                 flag++;
                 continue;
             }
-            if(choice < 1 || choice > 11)
+            if(choice < 1 || choice > 12)
             {
                 std::cout<<"invalid Input!!\n";
                 flag++;
@@ -82,7 +98,7 @@ void displayAdminMenu(Bank &bank)
                 return;
             break;
 
-            case 0:
+            case 12:
                 exit(1);
             break;
         }
@@ -91,24 +107,22 @@ void displayAdminMenu(Bank &bank)
     
 }
 
-void bufferClear()
-{
-    std::cin.clear();  
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
-    std::cout<<"\n------------------------------------------------------------------------------\n\n";
-}
-
 void addNewAccount(Bank& bank)
 {
     Account* account = nullptr;
     unsigned int account_type;
     std::string name;
+    std::string password;
     double balance;
     int flag = 0;
-    
-    std::cout<<"Name:";
+   
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+
+    std::cout<<"Name:";
     std::getline(std::cin,name);
+
+    std::cout<<"Password:";
+    std::getline(std::cin,password);
 
     do{
         std::cout<<"Balance: ";
@@ -189,7 +203,7 @@ void addNewAccount(Bank& bank)
         } 
         try
         {                
-            account = new SavingsAccount(name,balance,interest_rate);
+            account = new SavingsAccount(name,balance,password,interest_rate);
         }
         catch(const std::exception& e)
         {
@@ -224,7 +238,7 @@ void addNewAccount(Bank& bank)
 
         try
         {
-            account = new CheckingAccount(name,balance,overdraft_limit);
+            account = new CheckingAccount(name,balance,password,overdraft_limit);
         }
         catch(const std::exception& e)
         {

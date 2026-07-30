@@ -16,6 +16,7 @@
 
 #include "Bank.hpp"
 #include "Account.hpp"
+#include "Utilities.hpp"
 
 /**
  * @brief Displays the user menu.
@@ -28,13 +29,6 @@
  */
 void displayUserMenu(Bank& bank, Account* current_user);
 
-/**
- * @brief Clears the input buffer.
- *
- * Removes any remaining characters from the input stream to
- * prevent invalid input from affecting subsequent operations.
- */
-void bufferClear();
 
 /**
  * @brief Deposits money into the current user's account.

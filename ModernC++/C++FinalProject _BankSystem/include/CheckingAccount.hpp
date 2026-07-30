@@ -37,6 +37,7 @@ class CheckingAccount : public Account
     */
     CheckingAccount(const std::string &name,
             double balance,
+            const std::string &password,
             double overdraft_limit);
 
     /**

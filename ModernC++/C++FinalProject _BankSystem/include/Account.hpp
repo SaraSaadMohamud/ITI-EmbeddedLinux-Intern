@@ -48,7 +48,7 @@ class Account
      * @param balance Initial account balance.
      */
     Account(const std::string &name,
-            double balance);
+            double balance, const std::string &password);
 
     /**
      * @brief Virtual destructor.
@@ -79,6 +79,16 @@ class Account
     */
     double getAccountBalance() const;
 
+    /**
+        * @brief Gets the account password.
+        *
+        * Returns a constant reference to the account's password.
+        * The returned reference cannot be used to modify the password.
+        *
+        * @return Constant reference to the account password.
+    */
+    const std::string& getPassword() const;
+    
     /**
      * @brief Updates the account owner's name.
      *
@@ -129,6 +139,12 @@ class Account
      * Protected member accessible by derived account classes.
     */
     double balance_; 
+    /**
+     * @brief Account LogIn Password.
+     *
+     * Protected member accessible by derived account classes.
+    */
+    std::string password_;
 
     private:
     /**

@@ -20,6 +20,7 @@
 #define _ADMIN_HPP_
 
 #include "Bank.hpp"
+#include "Utilities.hpp"
 
 /**
  * @brief Displays the administrator menu.
@@ -27,11 +28,6 @@
  * @param bank A reference to the Bank object to be managed.
  */
 void displayAdminMenu(Bank &bank);
-
-/**
- * @brief Authenticates the administrator before granting access.
- */
-void AdminLogin();
 
 /**
  * @brief Creates a new bank account.

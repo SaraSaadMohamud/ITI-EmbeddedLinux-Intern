@@ -47,6 +47,7 @@ class SavingsAccount : public Account
     */
     SavingsAccount(const std::string &name,
             double balance,
+            const std::string &password,
             double interest_rate);
 
     /**

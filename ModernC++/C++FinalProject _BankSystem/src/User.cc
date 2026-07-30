@@ -9,7 +9,7 @@ void displayUserMenu(Bank& bank, Account* current_user)
     while(true)
     {
         flag = 0;
-        std::cout<<"\n------------------- User Menu ---------------------\n";
+        std::cout<<"\n------------------------------------ User Menu ----------------------------------\n";
         std::cout<<"1. Deposit.\n";
         std::cout<<"2. Withdraw.\n";
         std::cout<<"3. Transfer.\n";
@@ -17,7 +17,7 @@ void displayUserMenu(Bank& bank, Account* current_user)
         std::cout<<"5. Display My Acoount Transaction\n";
         std::cout<<"6. LogOut.\n";
         std::cout<<"7. Exit.\n";
-        std::cout<< "--------------------------------------------------------------\n";
+        std::cout<< "---------------------------------------------------------------------------------\n";
 
         
         do{
@@ -78,14 +78,6 @@ void displayUserMenu(Bank& bank, Account* current_user)
     }
 
 }
-
-void bufferClear()
-{
-    std::cin.clear();  
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
-    std::cout<<"\n------------------------------------------------------------------------------\n\n";
-}
-
 void deposit(Bank& bank, Account* current_user)
 {
     double amount;

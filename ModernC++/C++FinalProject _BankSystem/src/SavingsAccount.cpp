@@ -35,7 +35,8 @@ unsigned int SavingsAccount::savings_account_count_ = 0;
 
 SavingsAccount::SavingsAccount(const std::string &name,
         double balance,
-        double interest_rate): Account(name,balance),interest_rate_(interest_rate)
+        const std::string &password,
+        double interest_rate): Account(name,balance,password),interest_rate_(interest_rate)
 {
     if(interest_rate_ <= 0)
     {
