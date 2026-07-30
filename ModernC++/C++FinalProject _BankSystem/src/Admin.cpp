@@ -511,7 +511,7 @@ void transfer(Bank &bank)
     }
 }
 
-void displayBankAccountTransaction(Bank &bank)
+void displayAccountTransaction(Bank &bank)
 {
     unsigned int account_id;
     int flag = 0;
