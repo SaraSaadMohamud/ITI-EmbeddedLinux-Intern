@@ -5,6 +5,10 @@
 #include <string>
 #include "Account.hpp"
 #include "Transaction.hpp"
+#include <fstream>
+#include <sstream>
+#include "SavingsAccount.hpp"
+#include "CheckingAccount.hpp"
 
 /**
  * @file Bank.hpp
@@ -191,6 +195,38 @@ public:
         * transaction-related summaries.
     */
     void displayTransactionStatistics() const;
+
+    /**
+        * @brief Saves all bank accounts to persistent storage.
+        *
+        * Writes the current account information to a file so that
+        * it can be restored when the application is restarted.
+     */
+    void saveAccount() const;
+
+    /**
+        * @brief Loads bank accounts from persistent storage.
+        *
+        * Reads the stored account information from a file and
+        * reconstructs the bank's account records.
+     */
+    void loadAccounts();
+
+    /**
+        * @brief Saves all account transactions to persistent storage.
+        *
+        * Writes the transaction history of all accounts to a file,
+        * preserving transaction records between program executions.
+     */
+    void saveTransactions() const;
+
+    /**
+        * @brief Loads account transactions from persistent storage.
+        *
+        * Reads transaction records from a file and restores the
+        * transaction history for the corresponding accounts.
+     */
+    void loadTransactions();
 
 private:
 

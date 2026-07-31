@@ -35,7 +35,10 @@ unsigned int Transaction::next_transaction_id_   = 0;
 Transaction::Transaction(TransactionType transaction_type,
             double amount,
             unsigned int sender_account_id,
-            unsigned int receiver_account_id) : transaction_type_(transaction_type), 
+            unsigned int receiver_account_id,
+            unsigned int transaction_id = 0,
+            const std::string& date = "",
+            const std::string& time = "") : transaction_type_(transaction_type), 
             transaction_id_(++next_transaction_id_),
             amount_(amount),
             sender_account_id_(sender_account_id),
@@ -48,9 +51,20 @@ Transaction::Transaction(TransactionType transaction_type,
     
     ++transaction_count_;
 
-    auto now = std::chrono::system_clock::now();
-    transaction_date_ = std::format("{:%d/%m/%Y}", now);
-    transaction_time_ = std::format("{:%H:%M:%S}", now);
+    if (transaction_id == 0)
+    {
+        transaction_id_ = ++next_transaction_id_;
+
+        auto now = std::chrono::system_clock::now();
+        transaction_date_ = std::format("{:%d/%m/%Y}", now);
+        transaction_time_ = std::format("{:%H:%M:%S}", now);
+    }
+    else
+    {
+        transaction_id_ = transaction_id;
+        transaction_date_ = date;
+        transaction_time_ = time;
+    }
 
 }
 
@@ -118,4 +132,9 @@ void Transaction::displayTransaction() const
 unsigned int Transaction::getTransactionCount()
 {
     return transaction_count_;
+}
+
+void Transaction::setNextTransactionID(unsigned int maxID)
+{
+    next_transaction_id_ = maxID;
 }

@@ -1,0 +1,129 @@
+@startuml ClassDiagram
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+abstract class Account {
+  - owner_name_ : string
+  - account_id_ : unsigned int
+  - balance_ : double
+  - password_ : string
+  {static} - next_account_id_ : unsigned int
+  {static} - account_number_ : unsigned int
+  + deposit(amount : double) : void
+  + {abstract} withdraw(amount : double) : void
+  + displayAccountInfo() : void
+  + getAccountID() : unsigned int
+  + getAccountOwnerName() : string
+  + getAccountBalance() : double
+  + getPassword() : string
+  + setAccountOwnerName(name : string) : void
+  + {static} setNextAccountID(id : unsigned int) : void
+}
+
+class SavingsAccount {
+  - interest_rate_ : double
+  {static} - savings_account_count_ : unsigned int
+  + withdraw(amount : double) : void
+  + applyInterest() : void
+  + displayAccountInfo() : void
+  + getInterestRate() : double
+}
+
+class CheckingAccount {
+  - overdraft_limit_ : double
+  {static} - checking_account_count_ : unsigned int
+  + withdraw(amount : double) : void
+  + displayAccountInfo() : void
+  + getOverdraftLimit() : double
+}
+
+class Transaction {
+  - transaction_id_ : unsigned int
+  - transaction_type_ : TransactionType
+  - amount_ : double
+  - sender_account_id_ : unsigned int
+  - receiver_account_id_ : unsigned int
+  - transaction_date_ : string
+  - transaction_time_ : string
+  {static} - next_transaction_id_ : unsigned int
+  {static} - transaction_count_ : unsigned int
+  + displayTransaction() : void
+  + getTransactionID() : unsigned int
+  + getTransactionType() : TransactionType
+  + getTransactionAmount() : double
+  + getTransactionSenderAccountID() : unsigned int
+  + getTransactionReceiverAccountID() : unsigned int
+  + {static} setNextTransactionID(id : unsigned int) : void
+}
+
+enum TransactionType {
+  Deposit
+  Withdraw
+  Transfer
+}
+
+class Bank {
+  - bank_name_ : string
+  - accounts_ : vector<Account*>
+  - transactions_ : vector<Transaction>
+  + addAccount(new_acc : Account*) : void
+  + removeAccount(account_id : unsigned int) : void
+  + findAccount(account_id : unsigned int) : Account*
+  + deposit(amount : double, account_id : unsigned int) : void
+  + withdraw(amount : double, account_id : unsigned int) : void
+  + transfer(amount : double, id1 : unsigned int, id2 : unsigned int) : void
+  + displayAccounts() : void
+  + displayTransactions() : void
+  + displayBankInfo() : void
+  + displayTransactionStatistics() : void
+  + displayBankAccountTransaction(account_id : unsigned int) : void
+  - saveAccount() : void
+  - loadAccounts() : void
+  - saveTransactions() : void
+  - loadTransactions() : void
+}
+
+class Login {
+  + displayMainMenu() : void
+  + adminLogIn(bank : Bank&) : void
+  + userLogIn(bank : Bank&) : void
+}
+
+class Admin {
+  + displayAdminMenu(bank : Bank&) : void
+  + addNewAccount(bank : Bank&) : void
+  + removeAccount(bank : Bank&) : void
+  + deposit(bank : Bank&) : void
+  + withdraw(bank : Bank&) : void
+  + transfer(bank : Bank&) : void
+  + displayAccountTransaction(bank : Bank&) : void
+}
+
+class User {
+  + displayUserMenu(bank : Bank&, account_id : unsigned int) : void
+  + deposit(bank : Bank&) : void
+  + withdraw(bank : Bank&) : void
+  + transfer(bank : Bank&) : void
+  + displayAccountInfo(bank : Bank&) : void
+  + displayAccountTransactions(bank : Bank&) : void
+}
+
+class Utilities {
+  + {static} bufferClear() : void
+}
+
+Account <|-- SavingsAccount
+Account <|-- CheckingAccount
+Bank o-- "0..*" Account : owns
+Bank *-- "0..*" Transaction : contains
+Transaction ..> TransactionType : uses
+Admin ..> Bank : uses
+User ..> Bank : uses
+Login ..> Admin : routes to
+Login ..> User : routes to
+Admin ..> Utilities : uses
+User ..> Utilities : uses
+Login ..> Utilities : uses
+
+@enduml

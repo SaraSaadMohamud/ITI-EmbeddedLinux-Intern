@@ -69,8 +69,10 @@ public:
     Transaction(TransactionType transaction_type,
                 double amount,
                 unsigned int sender_account_id,
-                unsigned int receiver_account_id);
-
+                unsigned int receiver_account_id,
+                unsigned int transaction_id = 0,
+                const std::string& date = "",
+                const std::string& time = "");
 
     /**
      * @brief Destroys the Transaction object.
@@ -150,6 +152,17 @@ public:
      */
     static unsigned int getTransactionCount();
 
+    /**
+        * @brief Sets the next available transaction ID.
+        *
+        * Updates the internal transaction ID counter so that newly
+        * created transactions receive unique identifiers. This is
+        * typically used after loading existing transactions from
+        * persistent storage.
+        *
+        * @param maxID The highest transaction ID currently in use.
+    */
+    static void setNextTransactionID(unsigned int maxID);
 
 private:
 

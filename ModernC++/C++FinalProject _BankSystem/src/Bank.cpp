@@ -20,7 +20,10 @@
 #include <stdexcept>
 
 Bank::Bank(const std::string &bank_name) : bank_name_(bank_name)
-{}
+{
+    loadAccounts();
+    loadTransactions();
+}
 
 Bank::~Bank()
 {
@@ -46,6 +49,7 @@ void Bank::addAccount(Account* new_acc)
         throw std::invalid_argument("Account has already been added.");
     }
     accounts_.push_back(new_acc);
+    saveAccount();
 }
 
 void Bank::removeAccount(unsigned int account_id)
@@ -64,6 +68,7 @@ void Bank::removeAccount(unsigned int account_id)
     {
         delete (*iterator);
         accounts_.erase(iterator);
+        saveAccount();
         return;
     }
    } 
@@ -93,6 +98,8 @@ void Bank::deposit(double amount, unsigned int account_id)
 
     Transaction copy_transaction(Transaction::TransactionType::Deposit,amount,0,account_id);
     addTransaction(copy_transaction);
+    saveAccount();
+    saveTransactions();
 }
 
 void Bank::withdraw(double amount, unsigned int account_id)
@@ -106,6 +113,8 @@ void Bank::withdraw(double amount, unsigned int account_id)
 
     Transaction copy_transaction(Transaction::TransactionType::Withdraw,amount,account_id, 0);
     addTransaction(copy_transaction);
+    saveAccount();
+    saveTransactions();
 }
 
 void Bank::transfer(double amount,
@@ -134,6 +143,8 @@ void Bank::transfer(double amount,
 
     Transaction copy_transaction(Transaction::TransactionType::Transfer,amount,account1_id,account2_id);
     addTransaction(copy_transaction);
+    saveAccount();
+    saveTransactions();
 }
 
 unsigned int Bank::getAccountsCount() const
@@ -237,4 +248,231 @@ void Bank::displayBankInfo()const
     std::cout<<"Name            : "<<bank_name_             <<std::endl;
     std::cout<<"Accounts        : "<<accounts_.size()       <<std::endl;
     std::cout<<"Transactions    : "<<transactions_.size()   <<std::endl;
+}
+
+void Bank::saveAccount() const
+{
+    std::ofstream file("data/accounts.txt");
+    if(!file)
+    {
+        throw std::runtime_error("Can't open account file.\n");
+    }
+
+    for(const auto &account : accounts_)
+    {
+        
+        if(auto saving = dynamic_cast<SavingsAccount*>(account))
+        {
+            file
+            <<saving->getAccountID()<<","
+            <<saving->getAccountOwnerName()<<"," 
+            <<saving->getPassword()<<","
+            <<"Savings,"
+            <<saving->getAccountBalance()<<","
+            <<saving->getInterestRate()<<"\n";
+        }
+        else if (auto checking = dynamic_cast<CheckingAccount*>(account))
+        {
+            file
+            <<checking->getAccountID()<<","
+            <<checking->getAccountOwnerName()<<","
+            <<checking->getPassword()<<","
+            <<"Checking,"
+            <<checking->getAccountBalance()<<","
+            <<checking->getOverdraftLimit()<<"\n";
+        }
+    }
+}
+
+void Bank::loadAccounts()
+{
+    std::ifstream file("data/accounts.txt");
+    unsigned int maxid = 0;
+    if(!file)
+    {
+        return;
+    }
+
+    std::string line;
+    while(std::getline(file,line))
+    {
+        if(line.empty())
+        {
+            continue;
+        }
+        std::stringstream ss(line);
+        std::string idStr;
+        std::string name;
+        std::string password;
+        std::string type;
+        std::string balanceStr;
+        std::string extraStr;
+
+        std::getline(ss, idStr, ',');
+        std::getline(ss, name, ',');
+        std::getline(ss, password, ',');
+        std::getline(ss, type, ',');
+        std::getline(ss, balanceStr, ',');
+        std::getline(ss, extraStr, ',');
+
+        unsigned int id = std::stoul(idStr);
+        double balance = std::stod(balanceStr);
+        double extra = std::stod(extraStr);
+
+        if(id > maxid)
+        {
+            maxid = id;
+        }
+
+        if(type == "Savings")
+        {
+            accounts_.push_back(
+                new SavingsAccount(
+                    name,
+                    balance,
+                    password,
+                    extra,
+                    id
+                )   
+            );
+        }
+
+        else if(type == "Checking")
+        {
+            accounts_.push_back(
+                new CheckingAccount(
+                    name,
+                    balance,
+                    password,
+                    extra,
+                    id
+                )
+            );
+        }
+
+    }
+
+    Account::setNextAccountID(maxid);
+}
+
+void Bank::saveTransactions() const 
+{
+    std::ofstream file("data/transactions.txt");
+    if(!file)
+    {
+        throw std::runtime_error("Can't open transaction file.\n");
+    }
+
+    for(const auto &transaction : transactions_)
+    {
+        if(transaction.getTransactionType() == Transaction::TransactionType::Deposit){
+            file
+            <<transaction.getTransactionID()<<","
+            <<"Deposit,"
+            <<transaction.getTransactionAmount()<<","
+            <<transaction.getTransactionDate()<<","
+            <<transaction.getTransactionTime()<<","
+            <<transaction.getTransactionSenderAccountID()<<","
+            <<transaction.getTransactionReceiverAccountID()<<"\n" ;   
+        }
+        else if(transaction.getTransactionType() == Transaction::TransactionType::Withdraw)
+        {
+            file
+            <<transaction.getTransactionID()<<","
+            <<"Withdraw,"
+            <<transaction.getTransactionAmount()<<","
+            <<transaction.getTransactionDate()<<","
+            <<transaction.getTransactionTime()<<","
+            <<transaction.getTransactionSenderAccountID()<<","
+            <<transaction.getTransactionReceiverAccountID()<<"\n" ;  
+        }
+        else if(transaction.getTransactionType() == Transaction::TransactionType::Transfer)
+        {
+            file
+            <<transaction.getTransactionID()<<","
+            <<"Transfer,"
+            <<transaction.getTransactionAmount()<<","
+            <<transaction.getTransactionDate()<<","
+            <<transaction.getTransactionTime()<<","
+            <<transaction.getTransactionSenderAccountID()<<","
+            <<transaction.getTransactionReceiverAccountID()<<"\n" ;  
+        }
+    }
+}
+
+void Bank::loadTransactions()
+{
+    std::ifstream file("data/transactions.txt");
+
+    if (!file)
+    {
+        return;
+    }
+
+    unsigned int maxID = 0;
+    std::string line;
+
+    while (std::getline(file, line))
+    {
+        if(line.empty())
+            continue;
+        std::stringstream ss(line);
+
+        std::string idStr;
+        std::string typeStr;
+        std::string amountStr;
+        std::string date;
+        std::string time;
+        std::string senderStr;
+        std::string receiverStr;
+
+        std::getline(ss, idStr, ',');
+        std::getline(ss, typeStr, ',');
+        std::getline(ss, amountStr, ',');
+        std::getline(ss, date, ',');
+        std::getline(ss, time, ',');
+        std::getline(ss, senderStr, ',');
+        std::getline(ss, receiverStr, ',');
+
+        unsigned int id = std::stoul(idStr);
+        double amount = std::stod(amountStr);
+        unsigned int senderID = std::stoul(senderStr);
+        unsigned int receiverID = std::stoul(receiverStr);
+
+        Transaction::TransactionType type;
+
+        if (typeStr == "Deposit")
+        {
+            type = Transaction::TransactionType::Deposit;
+        }
+        else if (typeStr == "Withdraw")
+        {
+            type = Transaction::TransactionType::Withdraw;
+        }
+        else if (typeStr == "Transfer")
+        {
+            type = Transaction::TransactionType::Transfer;
+        }
+        else
+        {
+            continue;
+        }
+
+        transactions_.emplace_back(
+            id,
+            type,
+            amount,
+            date,
+            time,
+            senderID,
+            receiverID
+        );
+
+        if (id > maxID)
+        {
+            maxID = id;
+        }
+    }
+
+    Transaction::setNextTransactionID(maxID);
 }

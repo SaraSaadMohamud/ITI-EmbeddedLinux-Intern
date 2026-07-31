@@ -48,7 +48,8 @@ class SavingsAccount : public Account
     SavingsAccount(const std::string &name,
             double balance,
             const std::string &password,
-            double interest_rate);
+            double interest_rate,
+            unsigned int account_id = 0);
 
     /**
      * @brief Destroys the SavingsAccount object.

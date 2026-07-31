@@ -48,7 +48,7 @@ class Account
      * @param balance Initial account balance.
      */
     Account(const std::string &name,
-            double balance, const std::string &password);
+            double balance, const std::string &password, unsigned int account_id = 0);
 
     /**
      * @brief Virtual destructor.
@@ -131,6 +131,17 @@ class Account
      * @pure
     */
     virtual void withdraw(double amount) = 0;
+
+    /**
+        * @brief Sets the next available account ID.
+        *
+        * Updates the internal account ID counter so that newly created
+        * accounts receive unique identifiers. This function is typically
+        * called after loading existing accounts from persistent storage.
+        *
+        * @param id The highest account ID currently in use.
+    */
+    static void setNextAccountID(unsigned int id);
 
     protected:
     /**
