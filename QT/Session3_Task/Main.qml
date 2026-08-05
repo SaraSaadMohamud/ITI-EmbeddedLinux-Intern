@@ -20,12 +20,13 @@ ApplicationWindow {
             id: loginPage
 
             onLoginSuccessful: {
-                stackview_id.replace(
-                    "DashboardPage.qml",
-                    {
-                        stackView: stackview_id
-                    }
-                )
+
+                            stackview_id.push(
+                                "DashboardPage.qml",
+                                {
+                                    stackView: stackview_id
+                                }
+                            )
             }
         }
     }

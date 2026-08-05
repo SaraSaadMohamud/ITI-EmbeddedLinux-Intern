@@ -10,6 +10,8 @@ Page {
         color: "#F4F7FB"
     }
 
+    property StackView stackView
+
     ColumnLayout {
 
         anchors.centerIn: parent
@@ -166,6 +168,52 @@ Page {
                 )
 
                 console.log("==============================")
+            }
+        }
+
+        Button {
+
+            id: backButton
+
+            text: "Back to Dashboard"
+
+            Layout.fillWidth: true
+
+            contentItem: Text {
+
+                text: backButton.text
+
+                color: "#FFFFFF"
+
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+
+                font.bold: true
+            }
+
+            background: Rectangle {
+
+                radius: 8
+
+                color: {
+                    if (backButton.pressed)
+                        return "#007A9E"
+
+                    if (backButton.hovered)
+                        return "#008FB8"
+
+                    return "#00A6D6"
+                }
+            }
+
+            onClicked: {
+                console.log("Returning to Dashboard")
+
+                if (settingsPage.stackView) {
+                    settingsPage.stackView.pop()
+                } else {
+                    console.log("ERROR: StackView reference is missing")
+                }
             }
         }
     }
