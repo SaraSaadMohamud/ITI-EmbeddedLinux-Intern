@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 Page {
     id: dashboardPage
+    property StackView stackView
 
     background: Rectangle {
         color: "#F4F7FB"
@@ -97,9 +98,12 @@ Page {
 
                 onClicked: {
                     console.log("Opening Settings")
-                    console.log("StackView:", StackView.view)
 
-                    StackView.view.push("SettingsPage.qml")
+                    if (dashboardPage.stackView) {
+                        dashboardPage.stackView.push("SettingsPage.qml")
+                    } else {
+                        console.log("ERROR: StackView reference is missing")
+                    }
                 }
             }
         }
@@ -215,17 +219,31 @@ Page {
                             Switch {
                                 id: deviceSwitch
 
-                                Layout.alignment: Qt.AlignHCenter
-
                                 checked: model.status
 
-                                onToggled: {
+                                indicator: Rectangle {
+                                    implicitWidth: 45
+                                    implicitHeight: 25
 
-                                    console.log(
-                                        model.name +
-                                        " is now " +
-                                        (checked ? "ON" : "OFF")
-                                    )
+                                    radius: 13
+
+                                    color: deviceSwitch.checked
+                                           ? "#00A6D6"
+                                           : "#D1D5DB"
+
+                                    Rectangle {
+                                        width: 19
+                                        height: 19
+                                        radius: 10
+
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        x: deviceSwitch.checked
+                                           ? parent.width - width - 3
+                                           : 3
+
+                                        color: "white"
+                                    }
                                 }
                             }
 
