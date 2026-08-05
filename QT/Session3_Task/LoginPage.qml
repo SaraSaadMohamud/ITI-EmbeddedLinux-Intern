@@ -128,6 +128,42 @@ Page{
             }
         }
 
+        Button {
+            id: exitButton
+
+            text: "Exit"
+
+            Layout.fillWidth: true
+
+            contentItem: Text {
+                text: exitButton.text
+                color: "#FFFFFF"
+                font.bold: true
+
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                radius: 8
+
+                color: {
+                    if (exitButton.pressed)
+                        return "#991B1B"
+
+                    if (exitButton.hovered)
+                        return "#DC2626"
+
+                    return "#EF4444"
+                }
+            }
+
+            onClicked: {
+                console.log("Application closed")
+                Qt.quit()
+            }
+        }
+
         BusyIndicator{
 
             Layout.alignment: Qt.AlignHCenter
