@@ -1,4 +1,4 @@
-# 🏠 Smart Home Control Dashboard
+#  Smart Home Control Dashboard
 
 A front-end **Smart Home Control Dashboard** built with **Qt Quick (QML + JavaScript)**.
 
@@ -6,7 +6,7 @@ This is a **UI/front-end simulation only** — there is no real backend, no C++ 
 
 ---
 
-## 📖 Project Overview
+##  Project Overview
 
 The project simulates a simple smart home control panel with three screens:
 
@@ -18,36 +18,36 @@ Navigation between these three pages is handled with a single `StackView` hosted
 
 ---
 
-## ✨ Project Features
+##  Project Features
 
 Based strictly on what is implemented in the provided `.qml` files:
 
-- 🔐 **Simulated Login** with username/password validation (non-empty check only — no real authentication)
-- ⏳ **Loading state simulation** using a `Timer` and `BusyIndicator`
-- ❌ **Exit button** that closes the application (`Qt.quit()`)
-- 📋 **Device list** rendered from a `ListModel` (5 predefined devices)
-- 🔘 **Custom-styled ON/OFF switches** for each device (state is local to the delegate, logged to console)
-- 📊 **Custom-styled usage progress bars** per device
-- ⚙️ **Settings screen** with:
+- **Simulated Login** with username/password validation (non-empty check only — no real authentication)
+- **Loading state simulation** using a `Timer` and `BusyIndicator`
+- **Exit button** that closes the application (`Qt.quit()`)
+- **Device list** rendered from a `ListModel` (5 predefined devices)
+- **Custom-styled ON/OFF switches** for each device (state is local to the delegate, logged to console)
+- **Custom-styled usage progress bars** per device
+- **Settings screen** with:
   - Language selection (`ComboBox`)
   - Brightness control (`Slider`)
   - Room temperature control (`Dial`)
   - Notification toggle (`CheckBox`)
   - "Save Settings" button that logs all current values to the console (simulation only — nothing is persisted)
-- 🔄 **Page navigation** via `StackView` (`push()` / `pop()`)
-- 🚪 **Logout** button that pops back to the Login page
-- 🎨 Consistent color theme across all pages
+- **Page navigation** via `StackView` (`push()` / `pop()`)
+- **Logout** button that pops back to the Login page
+- Consistent color theme across all pages
 
 ---
 
 
 ## 🎥 Demo Video
 
-▶️ **[Watch the Smart Home Control Dashboard Demo](https://drive.google.com/drive/folders/1G8ECsHfv8yyApcDIvTp57noQU3CuPf-m)**
+ **[Watch the Smart Home Control Dashboard Demo](https://drive.google.com/drive/folders/1G8ECsHfv8yyApcDIvTp57noQU3CuPf-m)**
 
 The demo video showcases the application's main features, UI navigation, smart-home controls, and English / Arabic / French runtime localization.
 
-## 🛠 Technologies Used
+## Technologies Used
 
 | Technology | Usage |
 |---|---|
@@ -89,7 +89,7 @@ SmartHomeDashboard/
 
 ---
 
-## ▶️ How to Build and Run the Project
+##  How to Build and Run the Project
 
 ### Requirements
 
@@ -118,7 +118,7 @@ cmake --build .
 
 ---
 
-## 🧭 Application Flow / Navigation
+##  Application Flow / Navigation
 
 ```text
 ┌───────────────┐   loginSuccessful()   ┌─────────────────┐
@@ -140,7 +140,7 @@ cmake --build .
 
 ---
 
-## 📄 Detailed Explanation of Each QML File
+## Detailed Explanation of Each QML File
 
 ### 1. `Main.qml`
 
@@ -215,7 +215,7 @@ This is the application's root component and its responsibilities are:
 
 ---
 
-## 🧩 Qt/QML Components Used
+##  Qt/QML Components Used
 
 | Component | Role in this project |
 |---|---|
@@ -244,7 +244,7 @@ This is the application's root component and its responsibilities are:
 
 ---
 
-## 🧠 Important QML Concepts Used
+##  Important QML Concepts Used
 
 ### `id`
 Gives an object a name so it can be referenced elsewhere in the same file.
@@ -400,7 +400,7 @@ This is a common QML pattern: **child pages emit signals describing "what happen
 
 ---
 
-## 🔀 How `StackView` Is Passed Between Pages
+##  How `StackView` Is Passed Between Pages
 
 `DashboardPage` and `SettingsPage` do not create their own `StackView` — they each declare:
 
@@ -431,7 +431,7 @@ The same `stackView` reference is passed along every time a new page is pushed, 
 
 ---
 
-## ⚙️ Settings Navigation and the "Back to Dashboard" Button
+## Settings Navigation and the "Back to Dashboard" Button
 
 The **Settings** button on `DashboardPage` pushes `SettingsPage.qml` onto the stack, passing its own `stackView` reference along:
 ```qml
@@ -452,7 +452,7 @@ Since `SettingsPage` was pushed *on top of* `DashboardPage`, `pop()` removes it 
 
 ---
 
-## 🚪 Logout Functionality
+## Logout Functionality
 
 The **Logout** button on `DashboardPage` also just calls:
 ```qml
@@ -467,7 +467,7 @@ This works because of how the stack was built: `LoginPage` is expected to be the
 
 ---
 
-## 🔘 The Device `Switch` and Its ON/OFF State
+## The Device `Switch` and Its ON/OFF State
 
 Each row in the device list contains a `Switch`:
 ```qml
@@ -490,7 +490,7 @@ Switch {
 
 ---
 
-## 🎨 Customized `ProgressBar` and `Switch` Styling
+## Customized `ProgressBar` and `Switch` Styling
 
 Both controls override their default look using the `background` / `contentItem` / `indicator` properties, which is the standard way to restyle Qt Quick Controls.
 
@@ -521,7 +521,7 @@ This is a common QML pattern: instead of a hard state change, the `x` binding au
 
 ---
 
-## 🎨 Colors / Theme
+## Colors / Theme
 
 | Color | Hex | Usage |
 |---|---|---|
@@ -541,7 +541,7 @@ The palette is consistent across `LoginPage`, `DashboardPage`, and `SettingsPage
 
 ---
 
-## 🎓 What I Learned
+## What I Learned
 
 This project was a practical exercise in core Qt Quick / QML concepts:
 
@@ -557,7 +557,7 @@ This project was a practical exercise in core Qt Quick / QML concepts:
 
 ---
 
-## 🚀 Future Improvements
+## Future Improvements
 
 - Implement a real `Main.qml` if not already present, wiring `LoginPage → DashboardPage` via `loginSuccessful()`
 - Persist device switch state back into `devicesModel` (`model.status = checked` in `onToggled`)
