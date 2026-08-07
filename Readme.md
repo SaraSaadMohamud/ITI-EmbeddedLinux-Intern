@@ -413,12 +413,6 @@ The following are realistic next steps and are **not currently implemented**:
 
 ---
 
-## 🎥 Demo Video
-
-▶️ **[Watch the Smart Home Control Dashboard Demo](https://drive.google.com/drive/folders/1G8ECsHfv8yyApcDIvTp57noQU3CuPf-m)**
-
-The demo video showcases the application's main features, UI navigation, smart-home controls, and English / Arabic / French runtime localization.
-
 ## 👤 Author
 
 **Sara Saad Mahmoud**
