@@ -11,10 +11,21 @@ ApplicationWindow {
     title: qsTr("Electronics Shop")
     color:"#F5F7FA"
 
-    HomePage{
-        anchors.fill: parent
-    }
+    StackView {
+        id: stackView
 
+        anchors.top: headerBar.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+
+
+        initialItem: HomePage {
+            onExploreProductsClicked: {
+                stackView.push("ProductPage.qml")
+            }
+        }
+    }
 
     HeaderBar{
 
@@ -26,10 +37,12 @@ ApplicationWindow {
 
         onHomeClicked: {
             console.log("TEST: Home clicked")
+            stackView.push("HomePage.qml")
         }
 
         onProductsClicked: {
             console.log("TEST: Products clicked")
+            stackView.push("ProductPage.qml")
         }
 
         onCategoriesClicked: {

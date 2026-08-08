@@ -6,7 +6,7 @@ Rectangle{
     id:headerBar
     width: parent?parent.width : 1000
     height: 75
-    color: "transparent"
+    color: "#0F172A"
 
     // =====================================================
     // Signals
@@ -35,7 +35,7 @@ Rectangle{
         anchors.leftMargin: 30
         anchors.rightMargin: 30
 
-        spacing: 10
+        spacing: 25
 
             Image {
                 source: "qrc:/qt/qml/Session4Task_ElectronicsShop/imags/logo.png"
@@ -86,6 +86,7 @@ Rectangle{
                     console.log("Home clicked")
 
                     headerBar.homeClicked()
+                    stackView.push("HomePage.qml")
                 }
             }
 
@@ -133,6 +134,7 @@ Rectangle{
                     console.log("Products clicked")
 
                     headerBar.productsClicked()
+                    stackView.push("ProductPage.qml")
                 }
             }
 

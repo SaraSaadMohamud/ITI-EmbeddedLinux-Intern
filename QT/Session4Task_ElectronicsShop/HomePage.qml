@@ -3,9 +3,21 @@ import QtQuick.Controls.Basic
 import QtQuick.Layouts
 
 Page {
+
     id: homePage
+
+    signal exploreProductsClicked()
+
+    property string selectedCategory: ""
+    property bool showAllProducts: false
+    property bool showingAllProducts: false
+
     background: Rectangle {
         color: "#F5F7FA"
+    }
+
+    ProductModel{
+        id: productModel
     }
 
     ScrollView {
@@ -21,7 +33,7 @@ Page {
             // =========================================
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 380
+                Layout.preferredHeight: 750
                 color: "#0F172A"
 
                 clip: true
@@ -29,18 +41,20 @@ Page {
                     anchors.fill: parent
                     source: "imags/electronics_bg.png"
                     fillMode: Image.PreserveAspectCrop
-                    opacity: 0.50
+                    opacity: 0.30
                 }
 
                 Rectangle {
                     anchors.fill: parent
                     color: "#0F172A"
-                    opacity: 0.65
+                    opacity: 0.40
                 }
+
                 ColumnLayout {
                     anchors.centerIn: parent
                     spacing: 12
                     width: parent.width * 0.8
+                    anchors.verticalCenterOffset: 65
 
                     Label {
                         text: qsTr("Build. Create. Innovate.")
@@ -53,7 +67,7 @@ Page {
                     Label {
                         text: qsTr("Premium Electronics for Makers, Engineers & Robotics")
                         color: "#CBD5E1"
-                        font.pixelSize: 18
+                        font.pixelSize: 20
                         Layout.alignment: Qt.AlignHCenter
                         wrapMode: Text.WordWrap
                         horizontalAlignment: Text.AlignHCenter
@@ -80,6 +94,10 @@ Page {
                             radius: 10
                             color: exploreButton.pressed ? "#0891B2" : "#06B6D4"
                         }
+
+                        onClicked: {
+                            homePage.exploreProductsClicked()
+                        }
                     }
                 }
             }
@@ -105,7 +123,7 @@ Page {
 
                     Repeater {
                         model: [
-                            { name: "Embedded Systems", icon: "🔌" },
+                            { name: "Electronic Components", icon: "🔧" },
                             { name: "Robotics", icon: "🤖" },
                             { name: "Development Boards", icon: "🛠️" },
                             { name: "Sensors", icon: "📡" },
@@ -113,12 +131,26 @@ Page {
                         ]
 
                         delegate: Rectangle {
-                            color: "#FFFFFF"
+
+                            property bool selected:
+                                homePage.selectedCategory === modelData.name
+
+                            color: selected
+                                   ? "#E0F7FA"
+                                   : "#FFFFFF"
+
                             Layout.fillWidth: true
                             Layout.preferredHeight: 90
+
                             radius: 14
-                            border.color: "#E2E8F0"
-                            border.width: 1
+
+                            border.color:
+                                selected
+                                ? "#0891B2"
+                                : "#E2E8F0"
+
+                            border.width:
+                                selected ? 2 : 1
 
                             ColumnLayout {
                                 anchors.centerIn: parent
@@ -135,11 +167,38 @@ Page {
                                     font.pixelSize: 13
                                     font.bold: true
                                     color: "#334155"
+
                                     Layout.alignment: Qt.AlignHCenter
+
                                     horizontalAlignment: Text.AlignHCenter
                                     wrapMode: Text.WordWrap
                                 }
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked: {
+
+                                    if (homePage.selectedCategory === modelData.name) {
+
+                                        homePage.selectedCategory = ""
+
+                                    } else {
+
+                                        homePage.selectedCategory = modelData.name
+                                    }
+
+                                    homePage.showAllProducts = false
+                                    homePage.showingAllProducts = false
+
+                                    console.log(
+                                        "Selected Category:",
+                                        homePage.selectedCategory
+                                    )
+                                }
                         }
                     }
                 }
@@ -155,24 +214,74 @@ Page {
                 Layout.topMargin: 10
 
                 Label {
-                    text: qsTr("Popular Products")
+                    text: homePage.showingAllProducts
+                          ? (homePage.selectedCategory === ""
+                             ? qsTr("All Store Products")
+                             : qsTr(homePage.selectedCategory))
+                          : (homePage.selectedCategory === ""
+                             ? qsTr("Popular Products")
+                             : qsTr(homePage.selectedCategory))
+
                     Layout.fillWidth: true
                     font.pixelSize: 28
                     font.bold: true
                     color: "#111827"
                 }
 
+                // =========================================
+                // VIEW ALL / SHOW ALL BUTTON
+                // =========================================
                 Button {
                     id: viewAllButton
-                    text: qsTr("View All →")
+                    visible: homePage.selectedCategory !== ""
+                             && !homePage.showingAllProducts
+
+                    text: qsTr("Show All →")
+
                     flat: true
 
                     contentItem: Text {
                         text: viewAllButton.text
                         color: "#0891B2"
                         font.bold: true
+
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: {
+                        homePage.showAllProducts = true
+                        homePage.showingAllProducts = true
+                    }
+                }
+
+
+                // =========================================
+                // RETURN TO POPULAR
+                // =========================================
+                Button {
+                    id: returnButton
+
+                    visible: homePage.showingAllProducts
+
+                    text: qsTr("Return")
+
+                    flat: true
+
+                    contentItem: Text {
+                        text: returnButton.text
+                        color: "#64748B"
+                        font.bold: true
+
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: {
+
+                        homePage.showAllProducts = false
+                        homePage.showingAllProducts = false
+                        homePage.selectedCategory = ""
                     }
                 }
             }
@@ -181,85 +290,94 @@ Page {
             // PRODUCTS
             // =========================================
             GridLayout {
+
                 Layout.fillWidth: true
                 Layout.leftMargin: 35
                 Layout.rightMargin: 35
                 Layout.topMargin: 15
                 Layout.bottomMargin: 40
-                columns: 5
+
+                columns: 6
+
                 rowSpacing: 20
                 columnSpacing: 20
 
                 Repeater {
-                    model: 10
 
-                    delegate: Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 270
-                        color: "#FFFFFF"
-                        radius: 16
-                        border.color: "#E2E8F0"
-                        border.width: 1
+                    model: {
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            spacing: 8
-                            anchors.margins: 14
+                        // =====================================
+                        // CATEGORY SELECTED
+                        // =====================================
+                        if (homePage.selectedCategory !== "") {
 
-                            // صورة المنتج
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 140
-                                radius: 12
-                                color: "#F1F5F9"
-                                clip: true
+                            var categoryProducts =
+                                    productModel.getProductsByCategory(
+                                        homePage.selectedCategory
+                                    )
+                            if (homePage.showAllProducts) {
+                                return categoryProducts
+                            }
+                            return categoryProducts.slice(0, 6)
+                        }
 
-                                Label {
-                                    anchors.centerIn: parent
-                                    text: "📦"
-                                    font.pixelSize: 42
-                                    color: "#94A3B8"
-                                }
+                        // =====================================
+                        // NO CATEGORY SELECTED
+                        // =====================================
+                        if (homePage.showAllProducts) {
+                            var allProducts = []
+
+                            for (var j = 0; j < productModel.count; j++) {
+                                allProducts.push(productModel.get(j))
                             }
 
-                            Label {
-                                text: qsTr("Arduino Uno R3")
-                                font.pixelSize: 15
-                                font.bold: true
-                                color: "#1E293B"
-                                elide: Text.ElideRight
-                                Layout.fillWidth: true
-                            }
+                            return allProducts
+                        }
 
-                            Label {
-                                text: "$24.99"
-                                font.pixelSize: 17
-                                font.bold: true
-                                color: "#0891B2"
-                            }
+                        // =====================================
+                        // POPULAR PRODUCTS
+                        // =====================================
 
-                            Button {
-                                id: addToCart
-                                text: qsTr("Add to Cart")
-                                Layout.fillWidth: true
+                        var popularProducts = []
 
-                                contentItem: Text {
-                                    text: addToCart.text
-                                    color: "#FFFFFF"
-                                    font.bold: true
-                                    horizontalAlignment: Text.AlignHCenter
-                                    verticalAlignment: Text.AlignVCenter
-                                }
+                        for (
+                            var i = 0;
+                            i < Math.min(12, productModel.count);
+                            i++
+                        ) {
+                            popularProducts.push(
+                                productModel.get(i)
+                            )
+                        }
 
-                                background: Rectangle {
-                                    color: "#0F172A"
-                                    radius: 8
-                                }
-                            }
+                        return popularProducts
+                    }
+
+                    delegate: ProductCard {
+
+                        productName: modelData.productName
+                        productImage: modelData.productImage
+                        productPrice: modelData.productPrice
+                        productCategory: modelData.productCategory
+                        productAvailable: modelData.productAvailable
+
+                        productBrand: modelData.productBrand
+                        productVersion: modelData.productVersion
+                        productColor: modelData.productColor
+                        productVoltage: modelData.productVoltage
+                        productInterface: modelData.productInterface
+
+                        onAddToCartClicked: {
+
+                            console.log(
+                                "Cart:",
+                                productName
+                            )
                         }
                     }
                 }
             }
         }
     }
+}
 }
