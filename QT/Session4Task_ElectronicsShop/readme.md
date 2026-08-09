@@ -4,22 +4,7 @@ A modern desktop electronics shopping application built with **Qt 6** and **QML*
 
 ---
 
-##  Table of Contents
-
-- [Project Overview](#-project-overview)
-- [Project Goals](#-project-goals)
-- [Main Features](#-main-features)
-- [Application Pages](#-application-pages)
-- [Technology Stack](#-technology-stack)
-- [Project Architecture](#-project-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Internationalization Workflow](#-internationalization-workflow)
-- [Notes & Limitations](#-notes--limitations)
-
----
-
-## 📖 Project Overview
+##  Project Overview
 
 **Electronics Shop** is a desktop application that simulates an online electronics store, built entirely with **Qt Quick / QML** on top of a small **C++** backend layer. It was developed as part of an **ITI Embedded Linux training** program, with the goal of practicing modern Qt/QML application design: page-based navigation, reusable UI components, in-memory data models, and localized user interfaces.
 
