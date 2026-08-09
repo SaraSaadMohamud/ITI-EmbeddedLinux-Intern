@@ -5,6 +5,7 @@ import QtQuick.Layouts
 Page {
 
     id: productsPage
+    property ListModel cartModel
 
     background: Rectangle {
         color: "#F5F7FA"
@@ -126,11 +127,21 @@ Page {
                         productInterface: model.productInterface
 
                         onAddToCartClicked: {
+                            cartModel.addProduct({
+                                productName: productName,
+                                productImage: productImage,
+                                productPrice: productPrice,
+                                productCategory: productCategory,
 
-                            console.log(
-                                "Cart:",
-                                productName
-                            )
+                                productBrand: productBrand,
+                                productVersion: productVersion,
+                                productColor: productColor,
+                                productVoltage: productVoltage,
+                                productInterface: productInterface
+                            })
+
+                            console.log("Added:", productName)
+                            console.log("Cart count:", cartModel.count)
                         }
                     }
                 }

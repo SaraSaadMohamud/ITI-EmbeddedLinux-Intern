@@ -3,6 +3,9 @@ import QtQuick.Layouts
 import QtQuick.Controls.Basic
 
 ApplicationWindow {
+    CartModel {
+        id: cartModel
+    }
     id: window
     width: 1200
     height: 750
@@ -21,8 +24,20 @@ ApplicationWindow {
 
 
         initialItem: HomePage {
+            cartModel: cartModel
+
             onExploreProductsClicked: {
-                stackView.push("ProductPage.qml")
+                stackView.push("ProductPage.qml",{cartModel: cartModel})
+            }
+
+            onCategoryClicked: function(categoryName) {
+                stackView.push(
+                    "CategoriesPage.qml",
+                    {
+                        selectedCategory: categoryName,
+                        cartModel: cartModel
+                    }
+                )
             }
         }
     }
@@ -37,28 +52,41 @@ ApplicationWindow {
 
         onHomeClicked: {
             console.log("TEST: Home clicked")
-            stackView.push("HomePage.qml")
+            stackView.pop(null)
         }
 
         onProductsClicked: {
             console.log("TEST: Products clicked")
-            stackView.push("ProductPage.qml")
+            stackView.push(
+                "ProductPage.qml",
+                {cartModel: cartModel}
+            )
         }
 
         onCategoriesClicked: {
             console.log("TEST: Categories clicked")
+            stackView.push(
+                "CategoriesPage.qml",
+                {cartModel: cartModel}
+            )
         }
 
         onSearchClicked: {
             console.log("TEST: Search clicked")
+            stackView.push(
+                "SearchPage.qml",
+                {cartModel: cartModel}
+            )
         }
 
-        onLanguageClicked: {
-            console.log("TEST: Language clicked")
+        onLanguageSelected: function(language) {
+            console.log("Selected language:", language)
+            languageManager.setLanguage(language)
         }
 
         onCartClicked: {
             console.log("TEST: Cart clicked")
+            stackView.push("CartPage.qml")
         }
     }
 }

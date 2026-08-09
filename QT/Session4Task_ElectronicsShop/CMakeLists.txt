@@ -4,13 +4,19 @@ project(Session4Task_ElectronicsShop VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick LinguistTools)
 
-qt_standard_project_setup(REQUIRES 6.10)
+qt_standard_project_setup(
+    REQUIRES 6.10
+    I18N_SOURCE_LANGUAGE en
+    I18N_TRANSLATED_LANGUAGES ar fr de
+)
 
 
 qt_add_executable(appSession4Task_ElectronicsShop
     main.cpp
+    LanguageManager.cpp
+    LanguageManager.h
 )
 
 qt_add_qml_module(appSession4Task_ElectronicsShop
@@ -19,8 +25,12 @@ qt_add_qml_module(appSession4Task_ElectronicsShop
         Main.qml
         HomePage.qml
         ProductPage.qml
+        SearchPage.qml
+        CategoriesPage.qml
+        CartPage.qml
         components/HeaderBar.qml
         components/ProductCard.qml
+        model/CartModel.qml
         model/ProductModel.qml
 
     RESOURCES
@@ -76,6 +86,16 @@ qt_add_qml_module(appSession4Task_ElectronicsShop
         imags/voltage_regulator.png
         imags/wire_stripper.png
         imags/products.png
+        LanguageManager.h
+        LanguageManager.cpp
+)
+
+qt_add_translations(appSession4Task_ElectronicsShop
+    TS_FILE_BASE Session4_Task_ElectronicsShop
+    TS_FILE_DIR i18n
+
+    RESOURCE_PREFIX
+        /qt/qml/Session4Task_ElectronicsShop/i18n
 )
 
 set_target_properties(appSession4Task_ElectronicsShop PROPERTIES

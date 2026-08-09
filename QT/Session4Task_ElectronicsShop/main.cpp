@@ -1,10 +1,19 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+
+#include "LanguageManager.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
+   LanguageManager languageManager(&app,&engine);
+
+   engine.rootContext()->setContextProperty(
+        "languageManager",
+        &languageManager
+        );
 
     QObject::connect(
         &engine,

@@ -5,8 +5,10 @@ import QtQuick.Layouts
 Page {
 
     id: homePage
+    property ListModel cartModel
 
     signal exploreProductsClicked()
+    signal categoryClicked(string categoryName)
 
     property string selectedCategory: ""
     property bool showAllProducts: false
@@ -181,23 +183,8 @@ Page {
                                 cursorShape: Qt.PointingHandCursor
 
                                 onClicked: {
-
-                                    if (homePage.selectedCategory === modelData.name) {
-
-                                        homePage.selectedCategory = ""
-
-                                    } else {
-
-                                        homePage.selectedCategory = modelData.name
-                                    }
-
-                                    homePage.showAllProducts = false
-                                    homePage.showingAllProducts = false
-
-                                    console.log(
-                                        "Selected Category:",
-                                        homePage.selectedCategory
-                                    )
+                                    console.log("Category clicked:", modelData.name)
+                                    homePage.categoryClicked(modelData.name)
                                 }
                         }
                     }
@@ -369,11 +356,13 @@ Page {
 
                         onAddToCartClicked: {
 
-                            console.log(
-                                "Cart:",
-                                productName
-                            )
-                        }
+                              cartModel.addProduct(modelData)
+
+                              console.log(
+                                  "Added to cart:",
+                                  modelData.productName
+                              )
+                          }
                     }
                 }
             }

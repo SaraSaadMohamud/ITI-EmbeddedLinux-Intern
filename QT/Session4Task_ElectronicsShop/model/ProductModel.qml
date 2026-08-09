@@ -18,6 +18,36 @@ ListModel{
         return filteredProducts
     }
 
+    // =========================================
+    // Search Products
+    // =========================================
+    function searchProducts(searchText) {
+        var results = []
+
+        if (searchText.trim() === "") {
+            return results
+        }
+
+        var query = searchText.toLowerCase().trim()
+
+        for (var i = 0; i < count; i++) {
+
+            var product = get(i)
+
+            if (
+                product.productName.toLowerCase().includes(query) ||
+                product.productCategory.toLowerCase().includes(query) ||
+                product.productBrand.toLowerCase().includes(query) ||
+                product.productVersion.toLowerCase().includes(query) ||
+                product.productInterface.toLowerCase().includes(query)
+            ) {
+                results.push(product)
+            }
+        }
+
+        return results
+    }
+
     // =========================================================
     // Development Boards
     // =========================================================

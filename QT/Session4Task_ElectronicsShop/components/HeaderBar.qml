@@ -16,7 +16,7 @@ Rectangle{
     signal productsClicked()
     signal categoriesClicked()
     signal searchClicked()
-    signal languageClicked()
+    signal languageSelected(string language)
     signal cartClicked()
 
     Rectangle {
@@ -84,9 +84,7 @@ Rectangle{
                 onClicked: {
 
                     console.log("Home clicked")
-
                     headerBar.homeClicked()
-                    stackView.push("HomePage.qml")
                 }
             }
 
@@ -132,9 +130,7 @@ Rectangle{
                 onClicked: {
 
                     console.log("Products clicked")
-
                     headerBar.productsClicked()
-                    stackView.push("ProductPage.qml")
                 }
             }
 
@@ -161,27 +157,19 @@ Rectangle{
 
                     font.pixelSize: categoriesButton.hovered?16:14
                     font.bold: true
-
-                    horizontalAlignment:
-                        Text.AlignHCenter
-
-                    verticalAlignment:
-                        Text.AlignVCenter
+                    horizontalAlignment:Text.AlignHCenter
+                    verticalAlignment:Text.AlignVCenter
                 }
 
                 background: Rectangle {
-
                     radius: 8
-
                     color: categoriesButton.hovered
                            ? "#1E293B"
                            : "transparent"
                 }
 
                 onClicked: {
-
                     console.log("Categories clicked")
-
                     headerBar.categoriesClicked()
                 }
 
@@ -239,9 +227,7 @@ Rectangle{
                 }
 
                 onClicked: {
-
                     console.log("Search clicked")
-
                     headerBar.searchClicked()
                 }
             }
@@ -249,7 +235,6 @@ Rectangle{
             // =============================================
             // Language Button
             // =============================================
-
 
             Button {
 
@@ -270,14 +255,11 @@ Rectangle{
                            ? "#00C2FF"
                            : "#E2E8F0"
 
-                    font.pixelSize: languageButton.hovered?16:14
+                    font.pixelSize: languageButton.hovered ? 16 : 14
                     font.bold: true
 
-                    horizontalAlignment:
-                        Text.AlignHCenter
-
-                    verticalAlignment:
-                        Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
 
                 background: Rectangle {
@@ -290,10 +272,277 @@ Rectangle{
                 }
 
                 onClicked: {
+                    languagePopup.open()
 
-                    console.log("Language clicked")
+                }
+            }
 
-                    headerBar.languageClicked()
+
+            // =============================================
+            // Language Popup
+            // =============================================
+
+            Popup {
+
+                id: languagePopup
+
+                x: languageButton.x + languageButton.width - width
+                y: languageButton.y + languageButton.height + 8
+
+                width: 190
+                height: 210
+
+                padding: 10
+
+                modal: false
+
+                closePolicy:
+                    Popup.CloseOnEscape |
+                    Popup.CloseOnPressOutside
+
+
+                background: Rectangle {
+
+                    radius: 12
+
+                    color: "#FFFFFF"
+
+                    border.color: "#E2E8F0"
+                    border.width: 1
+                }
+
+
+                ColumnLayout {
+
+                    anchors.fill: parent
+
+                    spacing: 5
+
+
+                    Label {
+
+                        text: "🌐  " + qsTr("Language")
+
+                        color: "#0F172A"
+
+                        font.pixelSize: 15
+                        font.bold: true
+
+                        Layout.leftMargin: 8
+                        Layout.bottomMargin: 5
+                    }
+
+
+                    // =====================================
+                    // English
+                    // =====================================
+
+                    Button {
+
+                        id: englishButton
+
+                        text: "🇬🇧  English"
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 38
+
+                        flat: true
+
+                        contentItem: Text {
+
+                            text: englishButton.text
+
+                            color: "#334155"
+
+                            font.pixelSize: 14
+
+                            horizontalAlignment:
+                                Text.AlignLeft
+
+                            verticalAlignment:
+                                Text.AlignVCenter
+
+                            leftPadding: 10
+                        }
+
+                        background: Rectangle {
+
+                            radius: 8
+
+                            color:
+                                englishButton.hovered
+                                ? "#E0F7FA"
+                                : "transparent"
+                        }
+
+                        onClicked: {
+
+                            languageButton.text = "🌐 EN"
+
+                            languagePopup.close()
+
+                            headerBar.languageSelected("en")
+                        }
+                    }
+
+
+                    // =====================================
+                    // Arabic
+                    // =====================================
+
+                    Button {
+
+                        id: arabicButton
+
+                        text: "🇪🇬  العربية"
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 38
+
+                        flat: true
+
+                        contentItem: Text {
+
+                            text: arabicButton.text
+
+                            color: "#334155"
+
+                            font.pixelSize: 14
+
+                            horizontalAlignment:
+                                Text.AlignLeft
+
+                            verticalAlignment:
+                                Text.AlignVCenter
+
+                            leftPadding: 10
+                        }
+
+                        background: Rectangle {
+
+                            radius: 8
+
+                            color:
+                                arabicButton.hovered
+                                ? "#E0F7FA"
+                                : "transparent"
+                        }
+
+                        onClicked: {
+
+                            languageButton.text = "🌐 AR"
+
+                            languagePopup.close()
+
+                            headerBar.languageSelected("ar")
+                        }
+                    }
+
+
+                    // =====================================
+                    // French
+                    // =====================================
+
+                    Button {
+
+                        id: frenchButton
+
+                        text: "🇫🇷  Français"
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 38
+
+                        flat: true
+
+                        contentItem: Text {
+
+                            text: frenchButton.text
+
+                            color: "#334155"
+
+                            font.pixelSize: 14
+
+                            horizontalAlignment:
+                                Text.AlignLeft
+
+                            verticalAlignment:
+                                Text.AlignVCenter
+
+                            leftPadding: 10
+                        }
+
+                        background: Rectangle {
+
+                            radius: 8
+
+                            color:
+                                frenchButton.hovered
+                                ? "#E0F7FA"
+                                : "transparent"
+                        }
+
+                        onClicked: {
+
+                            languageButton.text = "🌐 FR"
+
+                            languagePopup.close()
+
+                            headerBar.languageSelected("fr")
+                        }
+                    }
+
+
+                    // =====================================
+                    // German
+                    // =====================================
+
+                    Button {
+
+                        id: germanButton
+
+                        text: "🇩🇪  Deutsch"
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 38
+
+                        flat: true
+
+                        contentItem: Text {
+
+                            text: germanButton.text
+
+                            color: "#334155"
+
+                            font.pixelSize: 14
+
+                            horizontalAlignment:
+                                Text.AlignLeft
+
+                            verticalAlignment:
+                                Text.AlignVCenter
+
+                            leftPadding: 10
+                        }
+
+                        background: Rectangle {
+
+                            radius: 8
+
+                            color:
+                                germanButton.hovered
+                                ? "#E0F7FA"
+                                : "transparent"
+                        }
+
+                        onClicked: {
+
+                            languageButton.text = "🌐 DE"
+
+                            languagePopup.close()
+
+                            headerBar.languageSelected("de")
+                        }
+                    }
                 }
             }
 
@@ -343,7 +592,6 @@ Rectangle{
                 onClicked: {
 
                     console.log("Cart clicked")
-
                     headerBar.cartClicked()
                 }
             }
