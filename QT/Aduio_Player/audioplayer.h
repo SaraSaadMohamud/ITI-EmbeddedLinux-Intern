@@ -33,10 +33,10 @@ class AudioPlayer : public QObject
 
     /* *******************************************************************************************************************/
     // Radio Property
-    Q_PROPERTY(bool is_radio_mode            READ getRadioMode            NOTIFY radioModeChanged            FINAL)
-    Q_PROPERTY(QVariantList radio_station    READ getRadioStation         NOTIFY radioStationChanged         FINAL)
-    Q_PROPERTY(QString current_radio_station READ getCurrentRadioStation  NOTIFY currentRadioStationChanged  FINAL)
-    َQ_PROPERTY(bool radio_check_connecting   READ getCheckConnectingState NOTIFY radioConnectingStateChanged FINAL)
+    Q_PROPERTY(bool is_radio_mode            READ getRadioMode            NOTIFY radioModeChanged             FINAL)
+    Q_PROPERTY(QVariantList radio_station    READ getRadioStation         NOTIFY radioStationsChanged         FINAL)
+    Q_PROPERTY(QString current_radio_station READ getCurrentRadioStation  NOTIFY currentRadioStationChanged   FINAL)
+    Q_PROPERTY(bool radio_check_connecting   READ getCheckConnectingState NOTIFY radioConnectingStateChanged  FINAL)
 
 public:
     explicit AudioPlayer(QObject *parent = nullptr);
@@ -80,7 +80,6 @@ public:
 
     // Radio
     Q_INVOKABLE void playRadionStation(qint64 radio_station_index);
-    Q_INVOKABLE void addingRadiostation(const QString &name, const QString &url);
     Q_INVOKABLE void previousRadioStation();
     Q_INVOKABLE void nextRadioStation();
 
@@ -99,7 +98,7 @@ signals:
 
     // Radio Signals
     void radioModeChanged ();
-    void radioStationChanged();
+    void radioStationsChanged();
     void currentRadioStationChanged();
     void radioConnectingStateChanged();
 
@@ -120,7 +119,7 @@ private:
     bool m_is_radio_mode = false;
     QVariantList m_radio_station;
     QString m_current_station_name;
-    QString m_current_station_index = -1;
+    qint64 m_current_station_index = -1;
     bool m_redio_recconecting = false;
 
     void setSource(const QString audio_source);

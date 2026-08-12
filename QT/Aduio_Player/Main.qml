@@ -81,7 +81,7 @@ ApplicationWindow {
                         // Audio Title
                         Text{
                             id: aduioTitleID
-                            text: media_player.audio_title
+                            text: media_player.is_radio_mode?media_player.current_radio_station: media_player.audio_title
                             //font.bold: true
                             font.pixelSize: 25
                             color: "#FFFFFF"
@@ -91,6 +91,7 @@ ApplicationWindow {
                         //Audio Author
                         Text{
                             id: audioAuthorID
+                            visible: !(media_player.is_radio_mode)
                             text: media_player.audio_author
                             font.bold: false
                             font.pixelSize: 22
@@ -101,6 +102,7 @@ ApplicationWindow {
                         //Audio Type
                         Text{
                             id: audioGenreID
+                            visible: !(media_player.is_radio_mode)
                             text: media_player.audio_genre
                             font.bold: false
                             font.pixelSize: 18
@@ -109,6 +111,7 @@ ApplicationWindow {
 
                         Text{
                             id: aduioAlbumID
+                            visible: !(media_player.is_radio_mode)
                             text: media_player.audio_album
                             font.bold: true
                             font.pixelSize: 15
@@ -132,14 +135,14 @@ ApplicationWindow {
                         id: elapsedTimeID
                         text: media_player.formateTime((media_player.position))
                         font.pixelSize: 15
-                        font.bold: fale
+                        font.bold: false
                         color: "white"
                     }
 
                     //Aduio Progress
                     Slider{
                         id: audioProgress
-                        enabled: true
+                        enabled: !(media_player.is_radio_mode)
                         Layout.fillWidth: true
                         from:0
                         to:media_player.duration
@@ -153,10 +156,20 @@ ApplicationWindow {
                     //Remainng time
                     Text{
                         id: remainingTimeID
+                        visible: !(media_player.is_radio_mode)
                         text: media_player.formateTime( (media_player.duration) - (media_player.position))
                         font.pixelSize: 15
-                        font.bold: fale
+                        font.bold: false
                         color: "white"
+                    }
+
+                    Text{
+                        id:radioLiveID
+                        visible: (media_player.is_radio_mode)
+                        text: "🔵 LIVE"
+                        font.pixelSize: 15
+                        font.bold: true
+                        color: "#B2EBF2"
                     }
                 }
 
@@ -202,7 +215,28 @@ ApplicationWindow {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
+                                radioStationPopupID.open();
+                            }
+                        }
+                    }
 
+                    Popup{
+                        id:radioStationPopupID
+                        anchors.centerIn: Overlay.overlay
+                        width:320
+                        height: 300
+
+                        ListView{
+                            anchors.fill: parent
+                            model : media_player.radio_station
+                            delegate: ItemDelegate{
+                                width: parent.width
+                                text: modelData.name + " - " + modelData.country
+
+                                onClicked: {
+                                    media_player.playRadionStation(index);
+                                    radioStationPopupID.close();
+                                }
                             }
                         }
                     }

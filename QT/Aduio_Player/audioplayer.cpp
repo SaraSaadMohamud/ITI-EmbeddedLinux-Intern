@@ -65,8 +65,14 @@ AudioPlayer::AudioPlayer(QObject *parent)
             {"name", "Nablus Quran Radio Station"},
             {"country","🇵🇸 Palestine"},
             {"url","http://www.quran-radio.org:8002/"}
-        }
-    };
+        },
+        QVariantMap{
+            {"name", "Jordan Quran Radio Station"},
+            {"country", "🇯🇴 Jordan"},
+            {"url", "https://jrtv-live.ercdn.net/jordanhd/jordanhd.m3u8"} // Live digital stream URL
+        },
+        };
+
 
     emit radioStationsChanged();
 
@@ -309,15 +315,15 @@ void AudioPlayer::setSource(const QString audio_source)
 
 void AudioPlayer::playRadionStation(qint64 radio_station_index)
 {
-    if( ( radio_station_index < 0 ) || ( radio_station_index > m_radio_station.size() ))
+    if( ( radio_station_index < 0 ) || ( radio_station_index >= m_radio_station.size() ))
     {
-        qCWarning(madiaPlayer)<<"Invalid radio station Index!";
+        qCWarning(mediaPlayer)<<"Invalid radio station Index!";
         return;
     }
 
-    QVariantMap radion_station = m_radio_station[m_current_station_index].toMap();
     m_is_radio_mode = true;
     m_current_station_index = radio_station_index;
+    QVariantMap radion_station = m_radio_station[m_current_station_index].toMap();
     m_current_station_name = radion_station.value("name").toString();
 
     clearMediMetaData();
@@ -347,7 +353,7 @@ void AudioPlayer::previousRadioStation()
         return;
     }
 
-    m_current_station_index =( ( (m_current_station_index-1) + m_radio_station.size() ) + m_radio_station.size() );
+    m_current_station_index =( ( (m_current_station_index-1) % m_radio_station.size() ) + m_radio_station.size() );
 
     emit currentPlayListIndexChanged();
     playRadionStation(m_current_station_index);
@@ -367,7 +373,7 @@ void AudioPlayer::nextRadioStation()
         return;
     }
 
-    m_current_station_index =( (m_current_station_index + 1) + m_radio_station.size() );
+    m_current_station_index =( (m_current_station_index + 1) % m_radio_station.size() );
 
     emit currentPlayListIndexChanged();
     playRadionStation(m_current_station_index);
@@ -385,7 +391,7 @@ QVariantList AudioPlayer::getRadioStation() const
 
 QString AudioPlayer::getCurrentRadioStation() const
 {
-    return m_current_station_index;
+    return m_current_station_name;
 }
 
 bool AudioPlayer::getCheckConnectingState() const
