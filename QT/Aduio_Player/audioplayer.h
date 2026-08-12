@@ -33,10 +33,10 @@ class AudioPlayer : public QObject
 
     /* *******************************************************************************************************************/
     // Radio Property
-    Q_PROPERTY(bool is_radio_mode READ getRadioMode  NOTIFY radioModeChanged FINAL)
-    Q_PROPERTY(QVariantList radio_station READ getRadioStation NOTIFY radioStationChanged FINAL)
-    Q_PROPERTY(QString current_radio_station READ getCurrentRadioStation NOTIFY currentRadioStationChanged FINAL)
-    َQ_PROPERTY(bool radio_check_connecting READ getCheckConnectingState NOTIFY radioConnectingStateChanged FINAL)
+    Q_PROPERTY(bool is_radio_mode            READ getRadioMode            NOTIFY radioModeChanged            FINAL)
+    Q_PROPERTY(QVariantList radio_station    READ getRadioStation         NOTIFY radioStationChanged         FINAL)
+    Q_PROPERTY(QString current_radio_station READ getCurrentRadioStation  NOTIFY currentRadioStationChanged  FINAL)
+    َQ_PROPERTY(bool radio_check_connecting   READ getCheckConnectingState NOTIFY radioConnectingStateChanged FINAL)
 
 public:
     explicit AudioPlayer(QObject *parent = nullptr);
@@ -52,11 +52,18 @@ public:
     QStringList getPlayingList() const;
     qint64 getCurrentPlayingIndex() const;
 
+    // Meta Data Getters
     QString getAudioTitle() const;
     QString getAudioAuthor() const;
     QString getAudioGenre() const;
     QString getAudioALbum() const;
     QString geterrorstring() const;
+
+    //Radio Getters
+    bool getRadioMode() const;
+    QVariantList getRadioStation() const;
+    QString getCurrentRadioStation() const;
+    bool getCheckConnectingState() const;
 
     // Setters
     void setPosition(qint64 position);
@@ -71,12 +78,13 @@ public:
     Q_INVOKABLE void loadFolder(const QString &folder_path);
     Q_INVOKABLE QString formateTime(qint64 time_ms);
 
+    // Radio
+    Q_INVOKABLE void playRadionStation(qint64 radio_station_index);
+    Q_INVOKABLE void addingRadiostation(const QString &name, const QString &url);
+    Q_INVOKABLE void previousRadioStation();
+    Q_INVOKABLE void nextRadioStation();
+
     /*************************************************************************/
-    //Radio Getters
-    bool getRadioMode() const;
-    QVariantList getRadioStation() const;
-    QString getCurrentRadioStation() const;
-    bool getCheckConnectingState() const;
 
 signals:
     void playingStateChanged();
@@ -108,8 +116,15 @@ private:
     QString m_audio_album;
     QString m_error_string;
 
-    void setSource(const QString audio_source);
+    // Radio
+    bool m_is_radio_mode = false;
+    QVariantList m_radio_station;
+    QString m_current_station_name;
+    QString m_current_station_index = -1;
+    bool m_redio_recconecting = false;
 
+    void setSource(const QString audio_source);
+    void clearMediMetaData();
 };
 
 #endif // AUDIOPLAYER_H

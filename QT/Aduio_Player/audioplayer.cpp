@@ -48,6 +48,28 @@ AudioPlayer::AudioPlayer(QObject *parent)
                             <<"Album Title  :"<<m_audio_album;
     });
 
+    // Radio
+
+    m_radio_station = {
+        QVariantMap{
+            {"name", "Cairo Quran Radio Station"},
+            {"country","🇪🇬 EGYPT"},
+            {"url","http://n12.radiojar.com/8s5u5tpdtwzuv"}
+        },
+        QVariantMap{
+            {"name", "Maka Quran Radio Station"},
+            {"country","🇸🇦 Saudi Arabia"},
+            {"url","http://live.mp3quran.net:8008/"}
+        },
+        QVariantMap{
+            {"name", "Nablus Quran Radio Station"},
+            {"country","🇵🇸 Palestine"},
+            {"url","http://www.quran-radio.org:8002/"}
+        }
+    };
+
+    emit radioStationsChanged();
+
 }
 
 
@@ -154,6 +176,12 @@ void AudioPlayer::stop()
 
 void AudioPlayer::next()
 {
+    if(m_is_radio_mode == true)
+    {
+        nextRadioStation();
+        return;
+    }
+
     if(m_play_list.isEmpty())
     {
         qCWarning(mediaPlayer)<<"PlayList is Empty";
@@ -171,6 +199,11 @@ void AudioPlayer::next()
 
 void AudioPlayer::previouse()
 {
+    if(m_is_radio_mode == true)
+    {
+        previousRadioStation();
+        return;
+    }
     if(m_play_list.isEmpty())
     {
         qCWarning(mediaPlayer)<<"PlayList is Empty";
@@ -188,6 +221,11 @@ void AudioPlayer::previouse()
 
 void AudioPlayer::loadFolder(const QString &folder_path)
 {
+    m_is_radio_mode = false;
+    m_current_station_name.clear();
+    emit radioModeChanged();
+    emit currentRadioStationChanged();
+
     qCDebug(mediaPlayer)<<"Incoming UI Folder Path:"<<folder_path;
     QUrl url(folder_path);
     qCDebug(mediaPlayer)<<"URL Folder Path:"<<url;
@@ -265,4 +303,102 @@ void AudioPlayer::setSource(const QString audio_source)
 {
     m_media_player->stop();
     m_media_player->setSource(QUrl(audio_source));
+}
+
+/*********************************************************************************************************************/
+
+void AudioPlayer::playRadionStation(qint64 radio_station_index)
+{
+    if( ( radio_station_index < 0 ) || ( radio_station_index > m_radio_station.size() ))
+    {
+        qCWarning(madiaPlayer)<<"Invalid radio station Index!";
+        return;
+    }
+
+    QVariantMap radion_station = m_radio_station[m_current_station_index].toMap();
+    m_is_radio_mode = true;
+    m_current_station_index = radio_station_index;
+    m_current_station_name = radion_station.value("name").toString();
+
+    clearMediMetaData();
+
+    QString radio_src = radion_station.value("url").toString();
+    setSource(radio_src);
+
+    emit currentRadioStationChanged();
+    emit radioModeChanged();
+
+    m_media_player->play();
+    qCInfo(mediaPlayer) <<"Tunning to Station: "<<m_current_station_name;
+
+}
+
+void AudioPlayer::previousRadioStation()
+{
+    if(m_radio_station.isEmpty())
+    {
+        qCWarning(mediaPlayer)<<"No Station Avalible, Station List is Empty!";
+        return;
+    }
+
+    if(!m_is_radio_mode)
+    {
+        qCWarning(mediaPlayer)<<"Radio Mode is Off!";
+        return;
+    }
+
+    m_current_station_index =( ( (m_current_station_index-1) + m_radio_station.size() ) + m_radio_station.size() );
+
+    emit currentPlayListIndexChanged();
+    playRadionStation(m_current_station_index);
+}
+
+void AudioPlayer::nextRadioStation()
+{
+    if(m_radio_station.isEmpty())
+    {
+        qCWarning(mediaPlayer)<<"No Station Avalible, Station List is Empty!";
+        return;
+    }
+
+    if(!m_is_radio_mode)
+    {
+        qCWarning(mediaPlayer)<<"Radio Mode is Off!";
+        return;
+    }
+
+    m_current_station_index =( (m_current_station_index + 1) + m_radio_station.size() );
+
+    emit currentPlayListIndexChanged();
+    playRadionStation(m_current_station_index);
+}
+
+bool AudioPlayer::getRadioMode() const
+{
+    return m_is_radio_mode;
+}
+
+QVariantList AudioPlayer::getRadioStation() const
+{
+    return m_radio_station;
+}
+
+QString AudioPlayer::getCurrentRadioStation() const
+{
+    return m_current_station_index;
+}
+
+bool AudioPlayer::getCheckConnectingState() const
+{
+    return m_redio_recconecting;
+}
+
+void AudioPlayer::clearMediMetaData()
+{
+    m_audio_title.clear();
+    m_audio_author.clear();
+    m_audio_genre.clear();
+    m_audio_album.clear();
+
+    emit metaDataChanged();
 }
