@@ -14,7 +14,7 @@ class AudioPlayer : public QObject
     // Coring Proberties
     Q_PROPERTY(bool playing_state   READ getPlayingState               NOTIFY playingStateChanged FINAL)
     Q_PROPERTY(qint64 position      READ getPosition WRITE setPosition NOTIFY positionChanged     FINAL)
-    Q_PROPERTY(qint64 playing_state READ getDuration                   NOTIFY durationChanged     FINAL)
+    Q_PROPERTY(qint64 duration      READ getDuration                   NOTIFY durationChanged     FINAL)
 
     // Audio Control Properties
     Q_PROPERTY(bool muted   READ getMuteState WRITE setMuteState NOTIFY muteStateChanged FINAL)
@@ -25,11 +25,18 @@ class AudioPlayer : public QObject
     Q_PROPERTY(qint64 current_playlist_index READ getCurrentPlayingIndex NOTIFY currentPlayListIndexChanged FINAL)
 
     // Audio MetaDate
-    Q_PROPERTY(QString audio_title        READ getAudioTitle    NOTIFY audioTitleChanged  FINAL)
-    Q_PROPERTY(QString audio_author       READ getAudioAuthor   NOTIFY audioAuthorChanged FINAL)
-    Q_PROPERTY(QString audio_genre        READ getAudioGenre    NOTIFY audioGenreChanged  FINAL)
-    Q_PROPERTY(QString audio_album        READ getudioALbum     NOTIFY audioAlbumChanged  FINAL)
-    Q_PROPERTY(QString error_string       READ geterrorstring   NOTIFY errorOccured       FINAL)
+    Q_PROPERTY(QString audio_title        READ getAudioTitle    NOTIFY metaDataChanged FINAL)
+    Q_PROPERTY(QString audio_author       READ getAudioAuthor   NOTIFY metaDataChanged FINAL)
+    Q_PROPERTY(QString audio_genre        READ getAudioGenre    NOTIFY metaDataChanged  FINAL)
+    Q_PROPERTY(QString audio_album        READ getAudioALbum    NOTIFY metaDataChanged  FINAL)
+    Q_PROPERTY(QString error_string       READ geterrorstring   NOTIFY errorOccured     FINAL)
+
+    /* *******************************************************************************************************************/
+    // Radio Property
+    Q_PROPERTY(bool is_radio_mode READ getRadioMode  NOTIFY radioModeChanged FINAL)
+    Q_PROPERTY(QVariantList radio_station READ getRadioStation NOTIFY radioStationChanged FINAL)
+    Q_PROPERTY(QString current_radio_station READ getCurrentRadioStation NOTIFY currentRadioStationChanged FINAL)
+    َQ_PROPERTY(bool radio_check_connecting READ getCheckConnectingState NOTIFY radioConnectingStateChanged FINAL)
 
 public:
     explicit AudioPlayer(QObject *parent = nullptr);
@@ -48,7 +55,7 @@ public:
     QString getAudioTitle() const;
     QString getAudioAuthor() const;
     QString getAudioGenre() const;
-    QString getudioALbum() const;
+    QString getAudioALbum() const;
     QString geterrorstring() const;
 
     // Setters
@@ -62,8 +69,14 @@ public:
     Q_INVOKABLE void next();
     Q_INVOKABLE void previouse();
     Q_INVOKABLE void loadFolder(const QString &folder_path);
-    Q_INVOKABLE void formateTime(qint64 time_ms);
+    Q_INVOKABLE QString formateTime(qint64 time_ms);
 
+    /*************************************************************************/
+    //Radio Getters
+    bool getRadioMode() const;
+    QVariantList getRadioStation() const;
+    QString getCurrentRadioStation() const;
+    bool getCheckConnectingState() const;
 
 signals:
     void playingStateChanged();
@@ -75,6 +88,12 @@ signals:
     void currentPlayListIndexChanged();
     void metaDataChanged();
     void errorOccured();
+
+    // Radio Signals
+    void radioModeChanged ();
+    void radioStationChanged();
+    void currentRadioStationChanged();
+    void radioConnectingStateChanged();
 
 private:
     QMediaPlayer* m_media_player;

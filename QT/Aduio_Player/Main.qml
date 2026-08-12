@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Dialogs
+import Aduio_Player
 
 ApplicationWindow {
     id: root
@@ -15,8 +16,11 @@ ApplicationWindow {
 
     readonly property real icons_size: root.width * 0.2
     readonly property real button_size: root.width * 0.06
-    readonly property real mute_size: root.width * 0.035
+    readonly property real mute_size: root.width * 0.049
 
+    AudioPlayer{
+        id: media_player
+    }
 
     Rectangle
     {
@@ -41,10 +45,11 @@ ApplicationWindow {
                 Text{
                     id: appTitle
                     Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: 100
                     text: qsTr("Audio Player")
                     font.bold: true
                     font.pixelSize: 30
-                    color: "#24bfb5"
+                    color: "#B2EBF2"
                 }
 
                 // First Row include AppIcon, MetaData
@@ -76,18 +81,17 @@ ApplicationWindow {
                         // Audio Title
                         Text{
                             id: aduioTitleID
-
-                            text: qsTr("Surah Taha")
-                            font.bold: true
-                            font.pixelSize: 30
+                            text: media_player.audio_title
+                            //font.bold: true
+                            font.pixelSize: 25
                             color: "#FFFFFF"
                             wrapMode: Text.Wrap
                         }
 
                         //Audio Author
                         Text{
-                            id: aduioAuthorID
-                            text: qsTr("Ahmed Al-Nafis")
+                            id: audioAuthorID
+                            text: media_player.audio_author
                             font.bold: false
                             font.pixelSize: 22
                             color: "#B2EBF2"
@@ -96,12 +100,20 @@ ApplicationWindow {
 
                         //Audio Type
                         Text{
-                            id: appTypeID
-                            Layout.alignment: Qt.AlignHCenter
-                            text: qsTr("Quran")
+                            id: audioGenreID
+                            text: media_player.audio_genre
                             font.bold: false
                             font.pixelSize: 18
                            color: "#546E7A"
+                        }
+
+                        Text{
+                            id: aduioAlbumID
+                            text: media_player.audio_album
+                            font.bold: true
+                            font.pixelSize: 15
+                            color: "#B2EBF2"
+                            wrapMode: Text.Wrap
                         }
 
                     }
@@ -113,12 +125,12 @@ ApplicationWindow {
                     id: durationAduioSlider
                     Layout.leftMargin: 25
                     Layout.rightMargin: 25
-                    spacing: 10
+                    spacing: 8
 
                     // Elapsed Aduio Time
                     Text{
                         id: elapsedTimeID
-                        text: qsTr("00:00")
+                        text: media_player.formateTime((media_player.position))
                         font.pixelSize: 15
                         font.bold: fale
                         color: "white"
@@ -130,18 +142,18 @@ ApplicationWindow {
                         enabled: true
                         Layout.fillWidth: true
                         from:0
-                        to:1
-                        value: 0.5
+                        to:media_player.duration
+                        value: media_player.position
 
                         onMoved: {
-
+                            media_player.position = value
                         }
                     }
 
                     //Remainng time
                     Text{
                         id: remainingTimeID
-                        text: qsTr("00:00")
+                        text: media_player.formateTime( (media_player.duration) - (media_player.position))
                         font.pixelSize: 15
                         font.bold: fale
                         color: "white"
@@ -159,7 +171,7 @@ ApplicationWindow {
                     FolderDialog{
                         id:folderDialogID
                         onAccepted: {
-
+                            media_player.loadFolder(selectedFolder)
                         }
                     }
 
@@ -212,7 +224,7 @@ ApplicationWindow {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
-
+                                media_player.previouse()
                             }
                         }
                     }
@@ -220,7 +232,8 @@ ApplicationWindow {
                     // Play, Pause Audio
                     Image{
                         id: playPauseAudioID
-                        source: "imags/pause.png"
+                        source: media_player.playing_state?
+                               "imags/pause.png": "imags/play.png"
                         Layout.preferredWidth: root.button_size
                         Layout.preferredHeight: root.button_size
                         fillMode: Image.PreserveAspectFit
@@ -228,7 +241,7 @@ ApplicationWindow {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
-
+                                media_player.playPause()
                             }
                         }
                     }
@@ -244,7 +257,7 @@ ApplicationWindow {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
-
+                                media_player.stop()
                             }
                         }
                     }
@@ -260,7 +273,7 @@ ApplicationWindow {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
-
+                                media_player.next()
                             }
                         }
                     }
@@ -273,10 +286,12 @@ ApplicationWindow {
 
                     RowLayout
                     {
+                        Layout.rightMargin: 25
                         // muted/ unmuted Audio
                         Image{
                             id: mutedUnmutedAudioID
-                            source: "imags/unmuted.png"
+                            source:  if(media_player.volume === 0) "imags/muted.png"
+                                     else  media_player.muted?"imags/muted.png": "imags/unmuted.png"
                             Layout.preferredWidth: root.mute_size
                             Layout.preferredHeight: root.mute_size
                             fillMode: Image.PreserveAspectFit
@@ -284,7 +299,7 @@ ApplicationWindow {
                             MouseArea{
                                 anchors.fill: parent
                                 onClicked: {
-
+                                    media_player.muted=!media_player.muted
                                 }
                             }
                         }
@@ -298,16 +313,16 @@ ApplicationWindow {
                             Layout.maximumWidth: 400
                             from:0
                             to:1
-                            value: 0.5
+                            value: media_player.volume
 
                             onMoved: {
-
+                                media_player.volume = value
                             }
                         }
 
                         Text{
                             id: volumeLevelID
-                            text: qsTr("50%")
+                            text: Math.round(media_player.volume * 100) + " %"
                             font.pixelSize: 14
                             font.bold: false
                             color: "white"

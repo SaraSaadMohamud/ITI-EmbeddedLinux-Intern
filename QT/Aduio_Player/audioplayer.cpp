@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QMediaMetaData>
+#include <QDir>
 
 Q_DECLARE_LOGGING_CATEGORY(mediaPlayer);
 Q_LOGGING_CATEGORY(mediaPlayer,"app.mediaPlayer")
@@ -45,7 +46,7 @@ AudioPlayer::AudioPlayer(QObject *parent)
                             <<"Author       :"<<m_audio_author
                             <<"Genre        :"<<m_audio_genre
                             <<"Album Title  :"<<m_audio_album;
-    })
+    });
 
 }
 
@@ -100,7 +101,7 @@ QString AudioPlayer::getAudioGenre() const
     return m_audio_genre;
 }
 
-QString AudioPlayer::getudioALbum() const
+QString AudioPlayer::getAudioALbum() const
 {
     return m_audio_album;
 }
@@ -125,7 +126,7 @@ void AudioPlayer::setPosition(qint64 position)
 
 void AudioPlayer::setMuteState(bool position)
 {
-    m_audio_output->mutedChanged(position);
+    m_audio_output->setMuted(position);
 }
 
 void AudioPlayer::setVolume(float position)
@@ -133,37 +134,135 @@ void AudioPlayer::setVolume(float position)
     m_audio_output->setVolume( qBound(0.0f,position,1.0f) );
 }
 
+
 void AudioPlayer::playPause()
 {
-    
+    if(getPlayingState())
+    {
+        m_media_player->pause();
+    }
+    else
+    {
+        m_media_player->play();
+    }
 }
 
 void AudioPlayer::stop()
 {
-    
+    m_media_player->stop();
 }
 
 void AudioPlayer::next()
 {
+    if(m_play_list.isEmpty())
+    {
+        qCWarning(mediaPlayer)<<"PlayList is Empty";
+        m_error_string = QString("PlayList is Empty");
+        emit errorOccured();
+        return;
+    }
     
+    m_current_playlist_index = ( (m_current_playlist_index+1)% m_play_list.size() );
+    emit currentPlayListIndexChanged();
+    setSource(m_play_list[m_current_playlist_index]);
+    m_media_player->play();
+    qCInfo(mediaPlayer)<<"Playing Local FIle: "<<m_play_list[m_current_playlist_index];
 }
 
 void AudioPlayer::previouse()
 {
+    if(m_play_list.isEmpty())
+    {
+        qCWarning(mediaPlayer)<<"PlayList is Empty";
+        m_error_string = QString("PlayList is Empty");
+        emit errorOccured();
+        return;
+    }
     
+    m_current_playlist_index = ( ( (m_current_playlist_index-1) + m_play_list.size()) % m_play_list.size() );
+    emit currentPlayListIndexChanged();
+    setSource(m_play_list[m_current_playlist_index]);
+    m_media_player->play();
+    qCInfo(mediaPlayer)<<"Playing Local FIle: "<<m_play_list[m_current_playlist_index];
 }
 
 void AudioPlayer::loadFolder(const QString &folder_path)
 {
+    qCDebug(mediaPlayer)<<"Incoming UI Folder Path:"<<folder_path;
+    QUrl url(folder_path);
+    qCDebug(mediaPlayer)<<"URL Folder Path:"<<url;
+    QString local_folder_path = url.toLocalFile();
+    qCDebug(mediaPlayer)<<"Local Folder Path:"<<local_folder_path;
+    
+    QDir dir(local_folder_path);
+    if(! dir.exists())
+    {
+        m_error_string = QString("FOlder doesn't exists: %1").arg(local_folder_path);
+        qCWarning(mediaPlayer)<<m_error_string;
+        emit errorOccured();
+        return;
+    }
+    
+    QStringList filters= {"*.mp3","*.m4a","*.wav"};
+    QFileInfoList filteredFiles = dir.entryInfoList(filters,QDir::Files);
+    
+    if(filteredFiles.isEmpty())
+    {
+        m_error_string = QString("no Aduio Files found in : %1").arg(local_folder_path);
+        qCWarning(mediaPlayer)<<m_error_string;
+        emit errorOccured();
+        return;
+    }
+    
+    QStringList audioFilesPath;
+    for(auto file: filteredFiles)
+    {
+        audioFilesPath<<file.absoluteFilePath();
+    }
+    
+    m_play_list = audioFilesPath;
+    m_current_playlist_index = 0;
+    m_error_string.clear();
+    
+    emit playListChanged();
+    emit currentPlayListIndexChanged();
+    emit errorOccured();
+    
+    setSource(m_play_list[m_current_playlist_index]);
+    qCInfo(mediaPlayer)<<"Loaded "<<m_play_list.size()<<" from "<<local_folder_path;
     
 }
 
-void AudioPlayer::formateTime(qint64 time_ms)
+QString AudioPlayer::formateTime(qint64 time_ms)
 {
+    if(time_ms < 0)
+    {
+        return("00:00");
+    }
+    
+    qint64 total_seconds = (time_ms) / 1000;
+    qint64 hrs = (total_seconds / 3600);
+    qint64 mins = (total_seconds % 3600) / 60;
+    qint64 seconds = (total_seconds % 60);
+    
+    if(hrs)
+    {
+        return QString("%1:%2:%3")
+                .arg(hrs,2,10,QChar('0'))
+                .arg(mins,2,10,QChar('0'))
+                .arg(seconds,2,10,QChar('0'));                   
+    }
+    else
+    {
+        return QString("%1:%2")
+            .arg(mins,2,10,QChar('0'))
+            .arg(seconds,2,10,QChar('0'));  
+    }
     
 }
 
 void AudioPlayer::setSource(const QString audio_source)
 {
-    
+    m_media_player->stop();
+    m_media_player->setSource(QUrl(audio_source));
 }
