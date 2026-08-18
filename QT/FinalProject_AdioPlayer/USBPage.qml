@@ -35,13 +35,6 @@ Page {
                 usbDevicesPopup.close()
                 usbFilesPopup.close()
             }
-
-            // USB was connected
-            if (!wasConnected && media_player.usb_connect) {
-                console.log("USB detected")
-                // Show USB selection popup
-                usbDevicesPopup.open()
-            }
         }
     }
 
@@ -165,7 +158,6 @@ Page {
                 // =================================================
                 ColumnLayout {
                     id: audioMetaData
-
                     Layout.alignment: Qt.AlignVCenter
                     spacing: 10
 

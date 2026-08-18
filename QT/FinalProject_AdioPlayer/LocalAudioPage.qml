@@ -18,10 +18,6 @@ Page{
         id: media_player
     }
 
-    /*Component.onCompleted: {
-        media_player.loadUSB()
-    }*/
-
     Rectangle
     {
         anchors.fill: parent
@@ -68,7 +64,7 @@ Page{
                 Text{
                     id: appTitle
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 100
+                    Layout.topMargin: 70
                     text: qsTr("Audio Player")
                     font.bold: true
                     font.pixelSize: 30

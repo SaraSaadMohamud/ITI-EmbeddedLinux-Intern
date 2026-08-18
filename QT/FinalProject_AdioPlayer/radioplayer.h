@@ -48,6 +48,8 @@ public:
     Q_INVOKABLE void stopRadioStation();
     Q_INVOKABLE void nextRadioStation();
     Q_INVOKABLE void previousRadioStation();
+    Q_INVOKABLE void addRadioStation(const QString &name, const QString &country, const QString &url);
+    //Q_INVOKABLE void removeRadioStation(const QString &radio_url);
 
     /*************************************************************************/
 

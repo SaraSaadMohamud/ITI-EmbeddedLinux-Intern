@@ -64,7 +64,7 @@ Page{
                 Text{
                     id: appTitle
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 100
+                    Layout.topMargin: 70
                     text: qsTr("Radio Player")
                     font.bold: true
                     font.pixelSize: 30
@@ -318,8 +318,8 @@ Page{
 
                         anchors.centerIn: Overlay.overlay
 
-                        width: 320
-                        height: 300
+                        width: 340
+                        height: 360
 
                         modal: true
                         focus: true
@@ -364,25 +364,34 @@ Page{
                                 spacing: 5
 
                                 delegate: ItemDelegate {
+
                                     width: radioStationList.width
                                     height: 55
 
-                                    text: modelData.name + " - " + modelData.country
-                                    font.pixelSize: 14
+                                    contentItem: RowLayout {
+                                        spacing: 10
 
-                                    contentItem: Text {
-                                        text: modelData.name + " - " + modelData.country
+                                        Text {
+                                            Layout.fillWidth: true
+                                            text: modelData.name + " - " + modelData.country
 
-                                        color: "white"
-                                        font.pixelSize: 14
+                                            color: "white"
+                                            font.pixelSize: 14
 
-                                        verticalAlignment: Text.AlignVCenter
-                                        elide: Text.ElideRight
+                                            elide: Text.ElideRight
+                                        }
+
+                                        /*Button {
+                                            text: qsTr("Remove")
+
+                                            onClicked: {
+                                                media_player.removeRadioStation(modelData.url)
+                                            }
+                                        }*/
                                     }
 
                                     background: Rectangle {
                                         radius: 8
-
                                         color: parent.hovered ? "#263B3D" : "transparent"
                                     }
 
@@ -410,6 +419,187 @@ Page{
                                         implicitWidth: 8
                                         radius: 4
                                         color: "#303638"
+                                    }
+                                }
+                            }
+
+                            Button {
+                                id: addStationButton
+
+                                text: qsTr("+ Add Radio Station")
+
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 45
+                                Layout.leftMargin: 15
+                                Layout.rightMargin: 15
+                                Layout.bottomMargin: 10
+
+                                onClicked: {
+                                    radioStationPopupID.close()
+                                    addStationPopup.open()
+                                }
+                            }
+                        }
+                    }
+
+                    Popup {
+                        id: addStationPopup
+
+                        anchors.centerIn: Overlay.overlay
+
+                        width: 350
+                        height: 350
+                        modal: true
+                        focus: true
+
+                        background: Rectangle {
+                            color: "#15191B"
+
+                            radius: 15
+                            border.color: "#24BFB5"
+                            border.width: 1
+                        }
+
+                        contentItem: ColumnLayout {
+                            spacing: 12
+                            Label {
+                                text: qsTr("Add Radio Station")
+
+                                color: "#B2EBF2"
+                                font.bold: true
+                                font.pixelSize: 20
+
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 45
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            TextField {
+                                id: stationNameField
+
+                                placeholderText: qsTr("Station Name")
+
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 20
+                                Layout.rightMargin: 20
+                            }
+
+                            TextField {
+                                id: stationCountryField
+
+                                placeholderText: qsTr("Country")
+
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 20
+                                Layout.rightMargin: 20
+                            }
+
+                            TextField {
+                                id: stationUrlField
+
+                                placeholderText: qsTr("Stream URL")
+
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 20
+                                Layout.rightMargin: 20
+                            }
+
+                            RowLayout {
+
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 20
+                                Layout.rightMargin: 20
+
+                                spacing: 10
+
+                                Button {
+                                    id: cancelButton
+
+                                    text: qsTr("Cancel")
+
+                                    Layout.fillWidth: true
+                                    contentItem: Text {
+                                        text: cancelButton.text
+
+                                        color: "#FFFFFF"
+                                        font.pixelSize: 15
+                                        font.bold: true
+
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+
+                                    background: Rectangle {
+                                        radius: 8
+
+                                        color: cancelButton.pressed ? "#37474F" : cancelButton.hovered ? "#455A64" : "#263238"
+
+                                        border.width: 1
+                                        border.color: "#546E7A"
+
+                                        Behavior on color {
+                                            ColorAnimation {
+                                                duration: 120
+                                            }
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        addStationPopup.close()
+                                    }
+                                }
+
+                                Button {
+                                    id: addButton
+
+                                    Layout.fillWidth: true
+
+                                    text: qsTr("Add")
+
+                                    enabled: stationNameField.text.trim() !== "" && stationCountryField.text.trim() !== "" &&
+                                            stationUrlField.text.trim() !== ""
+
+                                    contentItem: Text {
+                                        text: addButton.text
+
+                                        color: addButton.enabled ? "#FFFFFF" : "#607D80"
+
+                                        font.pixelSize: 15
+                                        font.bold: true
+
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+
+                                    background: Rectangle {
+                                        radius: 8
+
+                                        color: !addButton.enabled ? "#263238" : addButton.pressed ? "#168F89" : addButton.hovered
+                                                ? "#24BFB5" : "#1B7F7A"
+
+                                        border.width: 1
+                                        border.color: "#24BFB5"
+
+                                        Behavior on color {
+                                            ColorAnimation {
+                                                duration: 120
+                                            }
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        media_player.addRadioStation(
+                                            stationNameField.text,
+                                            stationCountryField.text,
+                                            stationUrlField.text
+                                        )
+
+                                        stationNameField.clear()
+                                        stationCountryField.clear()
+                                        stationUrlField.clear()
+
+                                        addStationPopup.close()
                                     }
                                 }
                             }

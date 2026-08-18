@@ -139,6 +139,65 @@ void RadioPlayer::nextRadioStation()
     playRadioStation(m_current_station_index);
 }
 
+void RadioPlayer::addRadioStation(const QString &name, const QString &country, const QString &url)
+{
+    if (name.trimmed().isEmpty() || country.trimmed().isEmpty() || url.trimmed().isEmpty())
+    {
+        qCWarning(mediaPlayer) << "Cannot add radio station: empty data.";
+        return;
+    }
+
+    QVariantMap station;
+
+    station["name"] = name.trimmed();
+    station["country"] = country.trimmed();
+    station["url"] = url.trimmed();
+    m_radio_station.append(station);
+
+    emit radioStationsChanged();
+    qCInfo(mediaPlayer)<< "Radio station added:" << name << country << url;
+}
+
+/*void RadioPlayer::removeRadioStation(const QString &radio_url)
+{
+    for (int i = 0; i < m_radio_station.size(); ++i)
+    {
+        QVariantMap station = m_radio_station[i].toMap();
+
+        if (station.value("url").toString() == radio_url)
+        {
+            QString stationName = station.value("name").toString();
+
+            // remove station is the current station
+            if (i == m_current_station_index)
+            {
+                stopRadioStation();
+
+                m_current_station_index = -1;
+                m_current_station_name.clear();
+
+                emit currentRadioStationChanged();
+                emit currentRadioStationIndexChanged();
+            }
+            // remove not the current station
+            else if (i < m_current_station_index)
+            {
+                --m_current_station_index;
+                emit currentRadioStationIndexChanged();
+            }
+
+            m_radio_station.removeAt(i);
+            emit radioStationsChanged();
+
+            qCInfo(mediaPlayer) << "Radio station removed:" << stationName;
+
+            return;
+        }
+    }
+
+    qCWarning(mediaPlayer)<< "Radio station not found:" << radio_url;
+}*/
+
 QVariantList RadioPlayer::getRadioStation() const
 {
     return m_radio_station;
