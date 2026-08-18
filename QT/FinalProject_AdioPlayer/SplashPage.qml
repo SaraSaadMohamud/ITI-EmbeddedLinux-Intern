@@ -75,7 +75,7 @@ Page {
             Label {
                 Layout.alignment: Qt.AlignHCenter
 
-                text: "AUDIO  •  RADIO  •  USB  •  BLUETOOTH  •  VIDEO"
+                text: "AUDIO  •  RADIO  •  USB  •  BLUETOOTH "
                 color: "#D9F7FF"
                 font.pixelSize: Math.max(13, parent.width * 0.014)
                 font.bold: true
