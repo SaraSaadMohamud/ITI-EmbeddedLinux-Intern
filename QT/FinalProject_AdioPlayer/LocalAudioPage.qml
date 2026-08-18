@@ -18,6 +18,10 @@ Page{
         id: media_player
     }
 
+    /*Component.onCompleted: {
+        media_player.loadUSB()
+    }*/
+
     Rectangle
     {
         anchors.fill: parent

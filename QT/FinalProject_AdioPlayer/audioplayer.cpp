@@ -4,6 +4,9 @@
 #include <QLoggingCategory>
 #include <QMediaMetaData>
 #include <QDir>
+#include <QDirIterator>
+#include <QStandardPaths>
+#include <QFileInfo>
 
 AudioPlayer::AudioPlayer(QObject *parent)
     : QObject{parent}
@@ -114,11 +117,10 @@ void AudioPlayer::setPosition(qint64 position)
     if ((position >= 0) && (position <= getDuration() ))
     {
         m_media_player-> setPosition(position);
-        emit positionChanged();
     }
-    else {
-        qCWarning(mediaPlayer)<<"Invalide Position: "<<position
-                               <<" Duration: "<<getDuration();
+    else
+    {
+        qCWarning(mediaPlayer)<<"Invalide Position: "<<position<<" Duration: "<<getDuration();
     }
 }
 
@@ -263,4 +265,250 @@ void AudioPlayer::setSource(const QString audio_source)
 {
     m_media_player->stop();
     m_media_player->setSource(QUrl(audio_source));
+}
+
+/*********************************************************************************************************************/
+bool AudioPlayer::getUSBConnection() const
+{
+    return m_usb_connected;
+}
+
+QString AudioPlayer::getUSBPath() const
+{
+    return m_usb_path;
+}
+
+QStringList AudioPlayer::getUSSBDevices() const
+{
+    return m_usb_devices;
+}
+
+void AudioPlayer::scanUSB()
+{
+    QString user = qEnvironmentVariable("USER");
+    QString mediaPath = "/media/"+ user;
+    qCDebug(mediaPlayer)<<"Scanning USB directory:"<<mediaPath;
+
+    QDir mediaDir(mediaPath);
+
+    bool oldConnected = m_usb_connected;
+    QString oldPath = m_usb_path;
+    QStringList oldDevices = m_usb_devices;
+    m_usb_devices.clear();
+
+    if (!mediaDir.exists())
+    {
+        if (oldConnected)
+        {
+            qCDebug(mediaPlayer)
+            << "USB removed - clearing player";
+
+            clearUSB();
+        }
+
+        m_usb_devices.clear();
+
+        if (oldDevices != m_usb_devices)
+        {
+            emit usbDevicesChanged();
+        }
+
+        return;
+    }
+
+    // if there are Multi USB
+    QStringList usbMountedDevices = mediaDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    if (usbMountedDevices.isEmpty())
+    {
+        if (oldConnected)
+        {
+            qCDebug(mediaPlayer)<< "USB removed - clearing player";
+            clearUSB();
+        }
+
+        if (oldDevices != m_usb_devices)
+        {
+            emit usbDevicesChanged();
+        }
+
+        qCDebug(mediaPlayer)<< "No USB device found.";
+
+        return;
+    }
+
+    QStringList audioFilters={
+                                "*.mp3",
+                                "*.m4a",
+                                "*.wav"
+    };
+
+    for(const QString &deviceName : usbMountedDevices)
+    {
+        QString devicePath = mediaDir.absoluteFilePath(deviceName);
+        qCDebug(mediaPlayer)<< "Checking device:"<< devicePath;
+
+        QDirIterator iterator(
+            devicePath,
+            audioFilters,
+            QDir::Files,
+            QDirIterator::Subdirectories
+        );
+
+        if (iterator.hasNext())
+        {
+            m_usb_devices.append(devicePath);
+            qCInfo(mediaPlayer)<< "Audio device found:" << devicePath;
+        }
+    }
+
+    if (m_usb_devices.isEmpty())
+    {
+        if (oldConnected)
+        {
+            qCDebug(mediaPlayer)<< "USB removed or contains no audio - clearing player";
+            clearUSB();
+        }
+
+        if (oldDevices != m_usb_devices)
+        {
+            emit usbDevicesChanged();
+        }
+
+        qCInfo(mediaPlayer)<< "No audio devices found.";
+
+        return;
+    }
+
+
+    m_usb_connected = true;
+
+    if (oldConnected != m_usb_connected)
+    {
+        emit usbConnectionChanged();
+    }
+    if (oldDevices != m_usb_devices)
+    {
+        emit usbDevicesChanged();
+    }
+
+    qDebug(mediaPlayer)<<"USB devices Found: "<<m_usb_devices;
+}
+
+void AudioPlayer::loadUSB(const QString &usbPath)
+{
+    if (usbPath.isEmpty()) {
+        m_error_string = "USB path is empty.";
+        qCWarning(mediaPlayer) << m_error_string;
+        emit errorOccured();
+        return;
+    }
+
+    QDir usbDir(usbPath);
+    if (!usbDir.exists())
+    {
+        m_error_string =QString("USB path does not exist: %1").arg(usbPath);
+        qCWarning(mediaPlayer)<< m_error_string;
+        emit errorOccured();
+        return;
+    }
+
+    m_usb_path = usbPath;
+    m_usb_connected = true;
+
+    emit usbConnectionChanged();
+    emit usbPathChanged();
+
+    QStringList audioFilters={
+        "*.mp3",
+        "*.m4a",
+        "*.wav"
+    };
+
+    QDirIterator iterator(
+        usbPath,
+        audioFilters,
+        QDir::Files,
+        QDirIterator::Subdirectories
+    );
+
+    QStringList usbAudioFiles;
+    while (iterator.hasNext())
+    {
+        usbAudioFiles.append(iterator.next());
+    }
+
+    if (usbAudioFiles.isEmpty())
+    {
+        m_error_string = QString("No audio files found in USB: %1").arg(usbPath);
+        qCWarning(mediaPlayer)<< m_error_string;
+        emit errorOccured();
+        return;
+    }
+
+    m_play_list = usbAudioFiles;
+    m_current_playlist_index = -1;
+    m_error_string.clear();
+
+    m_media_player->stop();
+    m_media_player->setSource(QUrl());
+
+    // Clear metadata
+    m_audio_title.clear();
+    m_audio_author.clear();
+    m_audio_genre.clear();
+    m_audio_album.clear();
+
+    emit playListChanged();
+    emit currentPlayListIndexChanged();
+    emit metaDataChanged();
+    emit positionChanged();
+    emit durationChanged();
+    emit playingStateChanged();
+
+    qCInfo(mediaPlayer) << "Loaded" << m_play_list.size() << "audio files from" << usbPath << "- waiting for user selection.";
+
+}
+
+void AudioPlayer::playSelected(int index)
+{
+    if (index < 0 || index >= m_play_list.size())
+    {
+        return;
+    }
+
+    m_current_playlist_index = index;
+    emit currentPlayListIndexChanged();
+    setSource(m_play_list[index]);
+   // m_media_player->play();
+}
+
+void AudioPlayer::clearUSB()
+{
+    qCDebug(mediaPlayer) << "USB disconnected - clearing player data";
+
+    m_media_player->stop();
+    m_media_player->setSource(QUrl());
+    m_play_list.clear();
+    m_current_playlist_index = -1;
+
+    // Clear metadata
+    m_audio_title.clear();
+    m_audio_author.clear();
+    m_audio_genre.clear();
+    m_audio_album.clear();
+
+    // Clear USB
+    m_usb_path.clear();
+    m_usb_connected = false;
+
+    // Notify QML
+    emit playListChanged();
+    emit currentPlayListIndexChanged();
+    emit metaDataChanged();
+    emit usbPathChanged();
+    emit usbConnectionChanged();
+    emit usbDevicesChanged();
+
+    qCDebug(mediaPlayer)<< "USB player data cleared successfully";
 }

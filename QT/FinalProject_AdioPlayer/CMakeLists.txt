@@ -50,6 +50,8 @@ qt_add_qml_module(appFinalProject_AdioPlayer
         images/return.png
         images/radioPlayer.png
         images/radio_connect.png
+        RESOURCES images/USB_page.png
+        RESOURCES images/USB_btn.png
 
 )
 

@@ -117,7 +117,7 @@ Page {
 
             id: splashTimer
 
-            interval: 6000
+            interval: 2000
             repeat: false
             running: true
 
