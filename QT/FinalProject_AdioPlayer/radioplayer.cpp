@@ -58,11 +58,11 @@ RadioPlayer::RadioPlayer(QObject *parent) : QObject{parent}
                             {"url", "https://jrtv-live.ercdn.net/jrradio/quranradio.m3u8"}
                         },
 
-                        QVariantMap{
+                       /* QVariantMap{
                             {"name", "Kuwait Radio Station"},
                             {"country", "🇰🇼 Kuwait2"},
                             {"url", "https://radio.mp3islam.com/listen/abdulbasit/radio.mp3"}
-                        },
+                        },*/
 
                         QVariantMap{
                             {"name", "Zitouna Quran Radio"},

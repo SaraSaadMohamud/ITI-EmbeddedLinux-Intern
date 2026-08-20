@@ -143,7 +143,7 @@ void Bank::transfer(double amount,
 
     Transaction copy_transaction(Transaction::TransactionType::Transfer,amount,account1_id,account2_id);
     addTransaction(copy_transaction);
-    saveAccount();
+    saveAccount(); 
     saveTransactions();
 }
 
@@ -459,13 +459,13 @@ void Bank::loadTransactions()
         }
 
         transactions_.emplace_back(
-            id,
             type,
             amount,
-            date,
-            time,
             senderID,
-            receiverID
+            receiverID,
+            id,
+            date,
+            time
         );
 
         if (id > maxID)

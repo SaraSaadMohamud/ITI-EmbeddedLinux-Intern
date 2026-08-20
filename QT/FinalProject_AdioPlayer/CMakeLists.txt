@@ -4,11 +4,18 @@ project(FinalProject_AdioPlayer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia)
+find_package(Qt6 REQUIRED COMPONENTS
+    Core
+    Gui
+    Qml
+    Quick
+    Multimedia
+    Bluetooth
+    Network
+)
 
-qt_standard_project_setup(REQUIRES 6.10)
+qt_standard_project_setup(REQUIRES 6.11)
 
-# Content of downloaded design from Figma to Qt or similar
 if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/importedcontent/CMakeLists.txt")
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/importedcontent)
 endif()
@@ -19,6 +26,7 @@ qt_add_executable(appFinalProject_AdioPlayer
 
 qt_add_qml_module(appFinalProject_AdioPlayer
     URI FinalProject_AdioPlayer
+
     QML_FILES
         Main.qml
         SplashPage.qml
@@ -27,9 +35,20 @@ qt_add_qml_module(appFinalProject_AdioPlayer
         RadioPage.qml
         USBPage.qml
         BluetoothPage.qml
-        SOURCES audioplayer.h audioplayer.cpp
-        SOURCES radioplayer.h radioplayer.cpp
-        SOURCES loggin.h loggin.cpp
+
+        SOURCES
+            audioplayer.h
+            audioplayer.cpp
+
+            radioplayer.h
+            radioplayer.cpp
+
+            loggin.h
+            loggin.cpp
+
+            bluetoothmanager.h
+            bluetoothmanager.cpp
+
     RESOURCES
         images/splashPage.png
         images/blutooth.png
@@ -37,12 +56,12 @@ qt_add_qml_module(appFinalProject_AdioPlayer
         images/radio.png
         images/sourcepage.png
         images/USB.png
-        images/muted.png
         images/Next.png
         images/pause.png
         images/play.png
         images/privous.png
         images/stop.png
+        images/muted.png
         images/unmuted.png
         images/folderUplode.png
         images/localAudioPlayer.png
@@ -50,26 +69,26 @@ qt_add_qml_module(appFinalProject_AdioPlayer
         images/return.png
         images/radioPlayer.png
         images/radio_connect.png
-        RESOURCES images/USB_page.png
-        RESOURCES images/USB_btn.png
-
+        images/USB_page.png
+        images/USB_btn.png
+        images/1.png
+        images/bluetooth_btn.png
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
 set_target_properties(appFinalProject_AdioPlayer PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appFinalProject_AdioPlayer
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING
+        ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     WIN32_EXECUTABLE TRUE
 )
 
 target_link_libraries(appFinalProject_AdioPlayer
     PRIVATE
-    Qt6::Quick
-    Qt6::Multimedia
+        Qt6::Quick
+        Qt6::Multimedia
+        Qt6::Bluetooth
+        Qt6::Network
 )
 
 install(TARGETS appFinalProject_AdioPlayer

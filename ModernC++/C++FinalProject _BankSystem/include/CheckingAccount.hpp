@@ -39,7 +39,7 @@ class CheckingAccount : public Account
             double balance,
             const std::string &password,
             double overdraft_limit,
-            unsigned int account_id = 0);
+            unsigned int account_id =0);
 
     /**
      * @brief Destroys the CheckingAccount object.

@@ -19,7 +19,7 @@ Page {
     Timer {
         id: usbScanTimer
 
-        interval: 300
+        interval: 1000
         repeat: true
         running: true
 

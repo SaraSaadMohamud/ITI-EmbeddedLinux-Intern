@@ -267,6 +267,106 @@ void AudioPlayer::setSource(const QString audio_source)
     m_media_player->setSource(QUrl(audio_source));
 }
 
+
+void AudioPlayer::playBluetoothFile(const QString &filePath)
+{
+    if (filePath.isEmpty())
+    {
+        m_error_string = "Bluetooth audio file path is empty.";
+
+        qCWarning(mediaPlayer)
+            << m_error_string;
+
+        emit errorOccured();
+
+        return;
+    }
+
+    QFileInfo fileInfo(filePath);
+
+    if (!fileInfo.exists())
+    {
+        m_error_string =
+            QString("Bluetooth audio file does not exist: %1")
+                .arg(filePath);
+
+        qCWarning(mediaPlayer)
+            << m_error_string;
+
+        emit errorOccured();
+
+        return;
+    }
+
+    if (!fileInfo.isFile())
+    {
+        m_error_string =
+            QString("Bluetooth path is not a file: %1")
+                .arg(filePath);
+
+        qCWarning(mediaPlayer)
+            << m_error_string;
+
+        emit errorOccured();
+
+        return;
+    }
+
+    qCInfo(mediaPlayer)
+        << "====================================";
+
+    qCInfo(mediaPlayer)
+        << "Playing Bluetooth received audio:";
+
+    qCInfo(mediaPlayer)
+        << filePath;
+
+    qCInfo(mediaPlayer)
+        << "====================================";
+
+
+    // Stop current playback
+    m_media_player->stop();
+
+
+    // Clear previous playlist
+    m_play_list.clear();
+
+    m_current_playlist_index = 0;
+
+    // Put received Bluetooth file in playlist
+    m_play_list.append(filePath);
+
+
+    // Clear previous metadata
+    m_audio_title.clear();
+    m_audio_author.clear();
+    m_audio_genre.clear();
+    m_audio_album.clear();
+
+    m_error_string.clear();
+
+
+    emit playListChanged();
+
+    emit currentPlayListIndexChanged();
+
+    emit metaDataChanged();
+
+    emit errorOccured();
+
+// =====================================================
+// Load Bluetooth audio file
+// =====================================================
+
+setSource(filePath);
+
+// =====================================================
+// Play automatically
+// =====================================================
+
+m_media_player->play();
+}
 /*********************************************************************************************************************/
 bool AudioPlayer::getUSBConnection() const
 {

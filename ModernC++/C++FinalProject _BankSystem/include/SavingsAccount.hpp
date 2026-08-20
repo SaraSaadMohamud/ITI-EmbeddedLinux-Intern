@@ -49,7 +49,7 @@ class SavingsAccount : public Account
             double balance,
             const std::string &password,
             double interest_rate,
-            unsigned int account_id = 0);
+            unsigned int account_id =0);
 
     /**
      * @brief Destroys the SavingsAccount object.

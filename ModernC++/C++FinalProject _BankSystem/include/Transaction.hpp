@@ -71,8 +71,8 @@ public:
                 unsigned int sender_account_id,
                 unsigned int receiver_account_id,
                 unsigned int transaction_id = 0,
-                const std::string& date = "",
-                const std::string& time = "");
+                const std::string& date ="",
+                const std::string& time="");
 
     /**
      * @brief Destroys the Transaction object.

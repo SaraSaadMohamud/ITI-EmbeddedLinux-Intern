@@ -48,7 +48,7 @@ class Account
      * @param balance Initial account balance.
      */
     Account(const std::string &name,
-            double balance, const std::string &password, unsigned int account_id = 0);
+            double balance, const std::string &password, unsigned int account_id =0);
 
     /**
      * @brief Virtual destructor.

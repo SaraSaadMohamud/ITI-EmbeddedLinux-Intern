@@ -25,7 +25,7 @@ CheckingAccount::CheckingAccount(const std::string &name,
         double balance,
         const std::string &password,
         double overdraft_limit,
-        unsigned int account_id = 0) : Account(name, balance,password,account_id), overdraft_limit_(0.0)
+        unsigned int account_id) : Account(name, balance,password,account_id), overdraft_limit_(0.0)
 {
     if(overdraft_limit <= 0)
     {

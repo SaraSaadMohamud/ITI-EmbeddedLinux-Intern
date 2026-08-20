@@ -1,0 +1,12 @@
+module FinalProject_AdioPlayer
+typeinfo appFinalProject_AdioPlayer.qmltypes
+prefer :/qt/qml/FinalProject_AdioPlayer/
+Main 254.0 Main.qml
+SplashPage 254.0 SplashPage.qml
+SourcePage 254.0 SourcePage.qml
+LocalAudioPage 254.0 LocalAudioPage.qml
+RadioPage 254.0 RadioPage.qml
+USBPage 254.0 USBPage.qml
+BluetoothPage 254.0 BluetoothPage.qml
+depends QtQuick
+

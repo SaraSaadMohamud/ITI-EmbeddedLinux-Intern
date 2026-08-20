@@ -81,6 +81,9 @@ public:
     Q_INVOKABLE void playSelected(int index);
     Q_INVOKABLE void clearUSB();
 
+    // Bluetooth 
+    Q_INVOKABLE void playBluetoothFile(const QString &filePath);
+
     /*************************************************************************/
 
 signals:

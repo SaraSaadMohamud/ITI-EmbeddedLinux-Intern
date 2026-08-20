@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/qt/qml/FinalProject_AdioPlayer">/home/sara-saad/ITI_EmbeddedLinux_Intern/QT/FinalProject_AdioPlayer/FinalProject_AdioPlayer</file>
+
+  </qresource>
+</RCC>
